@@ -1,4 +1,4 @@
-package com.encircle360.oss.receiptfox.model;
+package com.encircle360.oss.receiptfox.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InvoiceItem {
+public class InvoiceItemDTO {
 
     @NotNull
     private BigDecimal count;
