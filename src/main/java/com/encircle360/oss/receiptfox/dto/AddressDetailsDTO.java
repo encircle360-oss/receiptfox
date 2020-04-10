@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AddressDetailsDTO {
 
+    private String companyName;
     private String firstName;
     private String lastName;
     private String addressLine1;
@@ -19,5 +20,8 @@ public class AddressDetailsDTO {
     private String city;
     private String countryCode;
     private String email;
+    private String phoneNumber;
+    private String faxNumber;
+    private String websiteUrl;
     private String vatId;
 }

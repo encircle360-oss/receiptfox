@@ -21,19 +21,18 @@ public class Invoice {
     @Id
     private String id;
     private String reference; // some id or reference like billingAccountId for an invoice
-
     private AdressDetails sender;
     private AdressDetails receiver;
-
+    private PaymentDetails payment;
     private List<InvoiceItem> items;
-
     private BigDecimal totalAmount;
     private BigDecimal totalNetAmount;
     private BigDecimal totalVat;
     private BigDecimal vatRate;
+    private String currencyCode;
     private boolean isReverseCharge;
+    private String footerHeadline;
     private String footerText;
     private Map<String, String> attributes; // some meta attributes
-
     private byte[] document;
 }

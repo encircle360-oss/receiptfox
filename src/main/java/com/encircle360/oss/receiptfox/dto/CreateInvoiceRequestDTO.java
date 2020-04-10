@@ -18,11 +18,13 @@ public class CreateInvoiceRequestDTO {
     private String reference; // some id or reference like billingAccountId for an invoice
     private AddressDetailsDTO sender;
     private AddressDetailsDTO receiver;
+    private PaymentDetailsDTO payment;
     private List<InvoiceItemDTO> items;
     private BigDecimal totalAmount;
     private BigDecimal totalNetAmount;
     private BigDecimal totalVat;
     private BigDecimal vatRate;
+    private String currencyCode;
     private boolean isReverseCharge;
     private String footerText;
     private Map<String, String> attributes; // some meta attributes
