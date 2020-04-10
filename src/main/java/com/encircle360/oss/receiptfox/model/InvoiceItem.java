@@ -22,11 +22,15 @@ public class InvoiceItem {
     private String description;
 
     @NotNull
-    private BigDecimal price;
+    private BigDecimal netPrice;
 
     @NotNull
     private BigDecimal vatRate; // in decimal representation like 0.19
 
     @NotNull
     private BigDecimal vat; // the real vat amount for one item (count=1)
+
+    private BigDecimal totalNetPrice;
+    private BigDecimal totalVat;
+    private BigDecimal totalPrice;
 }

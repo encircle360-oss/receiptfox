@@ -25,8 +25,8 @@ public class Invoice {
     private AdressDetails receiver;
     private PaymentDetails payment;
     private List<InvoiceItem> items;
-    private BigDecimal totalAmount;
-    private BigDecimal totalNetAmount;
+    private BigDecimal totalPrice;
+    private BigDecimal totalNetPrice;
     private BigDecimal totalVat;
     private BigDecimal vatRate;
     private String currencyCode;

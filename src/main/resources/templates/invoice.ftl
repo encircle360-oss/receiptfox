@@ -134,18 +134,10 @@
                 <td>${item.getName()}</td>
                 <td>${item.getDescription()!""}</td>
                 <td style="text-align:right;">${item.getCount()}</td>
-                <td style="text-align:right;">${item.getPrice()} ${invoice.getCurrencyCode()}</td>
-                <td style="text-align:right;">${item.getCount()*item.getPrice()} ${invoice.getCurrencyCode()}</td>
+                <td style="text-align:right;">${item.getNetPrice()} ${invoice.getCurrencyCode()}</td>
+                <td style="text-align:right;">${item.getCount()*item.getNetPrice()} ${invoice.getCurrencyCode()}</td>
             </tr>
         </#list>
-        <tr>
-            <td>Beratung</td>
-            <td>telefonische Beratung in h</td>
-            <td style="text-align:right;">3,00</td>
-            <td style="text-align:right;">50,00 €</td>
-            <td style="text-align:right;">150,00 €</td>
-        </tr>
-
         <tr>
             <td colspan="5" style="border-bottom:1px solid #000;">&nbsp;</td>
         </tr>
@@ -154,11 +146,11 @@
         </tr>
         <tr>
             <td colspan="4" style="text-align:right;">Nettobetrag</td>
-            <td style="text-align:right;">559,50 €</td>
+            <td style="text-align:right;">${invoice.getTotalNetPrice()} ${invoice.getCurrencyCode()}</td>
         </tr>
         <tr>
-            <td colspan="4" style="text-align:right;">Umsatzsteuer 19%</td>
-            <td style="text-align:right;">106,31 €</td>
+            <td colspan="4" style="text-align:right;">Umsatzsteuer ${invoice.getVatRate()}</td>
+            <td style="text-align:right;">${invoice.getTotalVat()} ${invoice.getCurrencyCode()}</td>
         </tr>
         <tr>
             <td colspan="5" style="border-bottom: 1px solid #000;">&nbsp;</td>
@@ -168,7 +160,7 @@
         </tr>
         <tr>
             <td colspan="4" style="text-align:right; font-weight:bold;">Rechnungsbetrag</td>
-            <td style="text-align:right; font-weight:bold;">${invoice.getTotalAmount()} €</td>
+            <td style="text-align:right; font-weight:bold;">${invoice.getTotalPrice()} ${invoice.getCurrencyCode()}</td>
         </tr>
     </table>
 

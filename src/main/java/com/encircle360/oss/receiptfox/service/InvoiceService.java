@@ -36,56 +36,61 @@ public class InvoiceService {
         return invoiceRepository.save(invoice);
     }
 
-    private BigDecimal calculateTotalAmount(List<InvoiceItem> items) {
+    private BigDecimal calculateTotalPrice(List<InvoiceItem> items) {
         BigDecimal totalAmount = BigDecimal.ZERO;
         for (InvoiceItem invoiceItem : items) {
-            totalAmount = totalAmount.add(this.getFullPriceForPosition(invoiceItem));
+            totalAmount = totalAmount.add(invoiceItem.getTotalPrice());
         }
 
         return totalAmount;
     }
 
-    private BigDecimal calculateTotalNetAmount(List<InvoiceItem> items) {
+    private BigDecimal calculateTotalNetPrice(List<InvoiceItem> items) {
         BigDecimal netAmount = BigDecimal.ZERO;
         for (InvoiceItem invoiceItem : items) {
-            netAmount = netAmount.add(this.getPriceForPosition(invoiceItem));
+            netAmount = netAmount.add(invoiceItem.getTotalNetPrice());
         }
 
         return netAmount;
     }
 
-    private BigDecimal calculateTotalVatAmount(List<InvoiceItem> items) {
+    private BigDecimal calculateTotalVat(List<InvoiceItem> items) {
         BigDecimal vatAmount = BigDecimal.ZERO;
         for (InvoiceItem invoiceItem : items) {
-            vatAmount = vatAmount.add(this.getVatForPosition(invoiceItem));
+            vatAmount = vatAmount.add(invoiceItem.getTotalVat());
         }
 
         return vatAmount;
     }
 
-    private BigDecimal getPriceForPosition(InvoiceItem item) {
-        return item.getCount().multiply(item.getPrice());
-    }
-
-    private BigDecimal getVatForPosition(InvoiceItem item) {
-        return item.getCount().multiply(item.getVat());
-    }
-
-    private BigDecimal getFullPriceForPosition(InvoiceItem item) {
-        return this.getPriceForPosition(item).add(this.getVatForPosition(item));
-    }
-
     private void prepareInvoiceSave(Invoice invoice) throws IOException, InterruptedException, TemplateException {
-        if (invoice.getTotalAmount() == null) {
-            invoice.setTotalAmount(this.calculateTotalAmount(invoice.getItems()));
+
+        // process invoice item calculations
+        for (InvoiceItem item : invoice.getItems()) {
+            if (item.getTotalNetPrice() == null) {
+                item.setTotalNetPrice(item.getNetPrice().multiply(item.getCount()));
+            }
+
+            if (item.getTotalVat() == null) {
+                item.setTotalVat(item.getVat().multiply(item.getCount()));
+            }
+
+            if (item.getTotalPrice() == null) {
+                item.setTotalPrice(item.getTotalNetPrice().add(item.getTotalVat()));
+            }
         }
 
-        if (invoice.getTotalNetAmount() == null) {
-            invoice.setTotalNetAmount(this.calculateTotalNetAmount(invoice.getItems()));
+        // process invoice calculations
+        if (invoice.getTotalPrice() == null) {
+            invoice.setTotalPrice(this.calculateTotalPrice(invoice.getItems()));
+        }
+
+        if (invoice.getTotalNetPrice() == null) {
+            invoice.setTotalNetPrice(this.calculateTotalNetPrice(invoice.getItems()));
         }
 
         if (invoice.getTotalVat() == null) {
-            invoice.setTotalVat(this.calculateTotalVatAmount(invoice.getItems()));
+            invoice.setTotalVat(this.calculateTotalVat(invoice.getItems()));
         }
 
         if (invoice.getDocument() == null) {
