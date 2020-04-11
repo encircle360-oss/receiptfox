@@ -1,5 +1,6 @@
 package com.encircle360.oss.receiptfox.model;
 
+import com.encircle360.oss.receiptfox.util.LocaleUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,4 +36,8 @@ public class Invoice {
     private String footerText;
     private Map<String, String> attributes; // some meta attributes
     private byte[] document;
+
+    public String getCurrencySymbol() {
+        return LocaleUtils.getCurrencySymbol(this.currencyCode);
+    }
 }

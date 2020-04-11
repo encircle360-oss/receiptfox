@@ -124,11 +124,11 @@
 
     <table>
         <tr style="font-weight: bold;">
-            <td style="width:15%;">Artikel</td>
-            <td style="width:45%;">Beschreibung</td>
-            <td style="width:10%; text-align:right;">Menge</td>
-            <td style="width:15%; text-align:right;">Einzelpreis</td>
-            <td style="width:15%; text-align:right;">Preis</td>
+            <td style="width:15%;">Article</td>
+            <td style="width:45%;">Description</td>
+            <td style="width:10%; text-align:right;">Quantity</td>
+            <td style="width:15%; text-align:right;">Unit price</td>
+            <td style="width:15%; text-align:right;">Price</td>
         </tr>
         <tr>
             <td colspan="5" style="border-top:1px solid #000;">&nbsp;</td>
@@ -138,8 +138,8 @@
                 <td>${item.getName()}</td>
                 <td>${item.getDescription()!""}</td>
                 <td style="text-align:right;">${item.getCount()}</td>
-                <td style="text-align:right;">${item.getNetPrice()} ${invoice.getCurrencyCode()}</td>
-                <td style="text-align:right;">${item.getCount()*item.getNetPrice()} ${invoice.getCurrencyCode()}</td>
+                <td style="text-align:right;">${item.getNetPrice()} ${invoice.getCurrencySymbol()}</td>
+                <td style="text-align:right;">${item.getCount()*item.getNetPrice()} ${invoice.getCurrencySymbol()}</td>
             </tr>
         </#list>
         <tr>
@@ -149,13 +149,13 @@
             <td colspan="5">&nbsp;</td>
         </tr>
         <tr>
-            <td colspan="4" style="text-align:right;">Nettobetrag</td>
-            <td style="text-align:right;">${invoice.getTotalNetPrice()} ${invoice.getCurrencyCode()}</td>
+            <td colspan="4" style="text-align:right;">Net amount</td>
+            <td style="text-align:right;">${invoice.getTotalNetPrice()} ${invoice.getCurrencySymbol()}</td>
         </tr>
         <tr>
             <td colspan="4" style="text-align:right;">
                 VAT<#if invoice.isReverseCharge()> (Reverse Charged)</#if> ${invoice.getVatRate()}</td>
-            <td style="text-align:right;">${invoice.getTotalVat()} ${invoice.getCurrencyCode()}</td>
+            <td style="text-align:right;">${invoice.getTotalVat()} ${invoice.getCurrencySymbol()}</td>
         </tr>
         <tr>
             <td colspan="5" style="border-bottom: 1px solid #000;">&nbsp;</td>
@@ -164,12 +164,12 @@
             <td colspan="5">&nbsp;</td>
         </tr>
         <tr>
-            <td colspan="4" style="text-align:right; font-weight:bold;">Rechnungsbetrag</td>
+            <td colspan="4" style="text-align:right; font-weight:bold;">Invoice amount</td>
             <td style="text-align:right; font-weight:bold;">
                 <#if invoice.isReverseCharge()>
-                    ${invoice.getTotalNetPrice()} ${invoice.getCurrencyCode()}
+                    ${invoice.getTotalNetPrice()} ${invoice.getCurrencySymbol()}
                 <#else>
-                    ${invoice.getTotalPrice()} ${invoice.getCurrencyCode()}
+                    ${invoice.getTotalPrice()} ${invoice.getCurrencySymbol()}
                 </#if>
             </td>
         </tr>
@@ -199,7 +199,7 @@
 
     <footer style="position:fixed; bottom:5mm; left:0; font-size: 70%; font-weight: bold; text-align: center; width: 100%; vertical-align:bottom;">
         Geschäftsführer ${invoice.getSender().getFirstName()} ${invoice.getSender().getLastName()} · HRB HRBNRHERE ·
-        Amtsgericht Köln · USt-IdNr. ${invoice.getSender().getVatId()}
+        Amtsgericht Köln · VAT ID: ${invoice.getSender().getVatId()}
 
         <#if invoice.getPayment()??>
             <br>
