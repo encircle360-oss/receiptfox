@@ -3,11 +3,13 @@ package com.encircle360.oss.receiptfox.service;
 import com.encircle360.oss.receiptfox.model.Invoice;
 import com.encircle360.oss.receiptfox.model.InvoiceItem;
 import com.encircle360.oss.receiptfox.repository.InvoiceRepository;
+import com.encircle360.oss.receiptfox.util.LocaleUtils;
 import com.github.jhonnymertz.wkhtmltopdf.wrapper.Pdf;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class InvoiceService {
@@ -30,6 +33,7 @@ public class InvoiceService {
     private static final String TMP_INVOICE_DIR = "/tmp/invoices/";
     private static final String INVOICE_TEMPLATE = "invoice.ftl";
     private final Configuration freemarkerConfig;
+    private LocaleUtils localeUtils;
 
     public Invoice save(Invoice invoice) throws IOException, InterruptedException, TemplateException {
         this.prepareInvoiceSave(invoice);
@@ -64,6 +68,11 @@ public class InvoiceService {
     }
 
     private void prepareInvoiceSave(Invoice invoice) throws IOException, InterruptedException, TemplateException {
+        if (invoice.isReverseCharge()) {
+            if (invoice.getReceiver().getVatId() == null || invoice.getReceiver().getVatId().isEmpty()) {
+                log.error("VAT ID is missing or empty for invoice with reference {}! This doesn't apply with the Reverse Charge regulations.", invoice.getReference());
+            }
+        }
 
         // process invoice item calculations
         for (InvoiceItem item : invoice.getItems()) {

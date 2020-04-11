@@ -63,7 +63,11 @@
                     <strong>${invoice.getReceiver().getFirstName()} ${invoice.getReceiver().getLastName()}</strong>
                 </#if>
                 <br>${invoice.getReceiver().getAddressLine1()}
-                <br><br>${invoice.getReceiver().getPostalCode()} ${invoice.getReceiver().getCity()}<br><br>
+                <br><br>${invoice.getReceiver().getPostalCode()} ${invoice.getReceiver().getCity()}
+                <br>${invoice.getReceiver().getCountryDisplayName()}
+                <#if invoice.getReceiver().getVatId()??>
+                    <br><br>VAT ID: ${invoice.getReceiver().getVatId()}<br><br>
+                </#if>
                 <br><br><br><br><br>
             </td>
             <td style="width:30%; vertical-align:top;">
@@ -149,7 +153,8 @@
             <td style="text-align:right;">${invoice.getTotalNetPrice()} ${invoice.getCurrencyCode()}</td>
         </tr>
         <tr>
-            <td colspan="4" style="text-align:right;">Umsatzsteuer ${invoice.getVatRate()}</td>
+            <td colspan="4" style="text-align:right;">
+                VAT<#if invoice.isReverseCharge()> (Reverse Charged)</#if> ${invoice.getVatRate()}</td>
             <td style="text-align:right;">${invoice.getTotalVat()} ${invoice.getCurrencyCode()}</td>
         </tr>
         <tr>
@@ -160,13 +165,27 @@
         </tr>
         <tr>
             <td colspan="4" style="text-align:right; font-weight:bold;">Rechnungsbetrag</td>
-            <td style="text-align:right; font-weight:bold;">${invoice.getTotalPrice()} ${invoice.getCurrencyCode()}</td>
+            <td style="text-align:right; font-weight:bold;">
+                <#if invoice.isReverseCharge()>
+                    ${invoice.getTotalNetPrice()} ${invoice.getCurrencyCode()}
+                <#else>
+                    ${invoice.getTotalPrice()} ${invoice.getCurrencyCode()}
+                </#if>
+            </td>
         </tr>
     </table>
 
     <br><br><br>
 
     <table>
+        <#if invoice.isReverseCharge()>
+            <tr>
+                <td>
+                    <br>
+                    VAT Reverse Charged.
+                </td>
+            </tr>
+        </#if>
         <tr>
             <td style="font-weight:bold;"><u>${invoice.getFooterHeadline()!""}</u></td>
         </tr>
