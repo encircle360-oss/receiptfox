@@ -4,6 +4,9 @@ import com.encircle360.oss.receiptfox.model.Invoice;
 import com.encircle360.oss.receiptfox.model.InvoiceItem;
 import com.encircle360.oss.receiptfox.repository.InvoiceRepository;
 import com.github.jhonnymertz.wkhtmltopdf.wrapper.Pdf;
+import com.github.jhonnymertz.wkhtmltopdf.wrapper.configurations.WrapperConfig;
+import com.github.jhonnymertz.wkhtmltopdf.wrapper.configurations.XvfbConfig;
+import com.github.jhonnymertz.wkhtmltopdf.wrapper.params.Param;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -18,7 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -106,8 +111,17 @@ public class InvoiceService {
         }
     }
 
+    public static Boolean isRunningInsideDocker() {
+        try (Stream<String> stream =
+                     Files.lines(Paths.get("/proc/1/cgroup"))) {
+            return stream.anyMatch(line -> line.contains("/docker"));
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
     private byte[] generateInvoiceDocument(Invoice invoice) throws IOException, InterruptedException, TemplateException {
-        Pdf pdf = new Pdf();
+        Pdf pdf = new Pdf(this.getWkhtmlToPdfWrapperConfig());
         pdf.addPageFromString(this.renderInvoiceDocumentHTML(invoice));
         pdf.addToc();
         File invoiceDocumentFile = pdf.saveAsDirect(TMP_INVOICE_DIR + UUID.randomUUID() + ".pdf");
@@ -115,6 +129,19 @@ public class InvoiceService {
         invoiceDocumentFile.delete();
 
         return document;
+    }
+
+    private WrapperConfig getWkhtmlToPdfWrapperConfig() {
+        XvfbConfig xc = new XvfbConfig();
+        xc.addParams(new Param("--auto-servernum"));
+
+        WrapperConfig wc = new WrapperConfig();
+
+        if (isRunningInsideDocker()) {
+            wc.setXvfbConfig(xc);
+        }
+
+        return wc;
     }
 
     private String renderInvoiceDocumentHTML(Invoice invoice) throws IOException, TemplateException {

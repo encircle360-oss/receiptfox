@@ -43,7 +43,7 @@ public class InvoiceController {
     }
 
     @GetMapping("{id}/download")
-    public ResponseEntity<?> downloadFile(@PathVariable String id, HttpServletResponse response) throws IOException {
+    public ResponseEntity<?> downloadInvoiceDocument(@PathVariable String id, HttpServletResponse response) throws IOException {
         Optional<Invoice> invoiceOptional = invoiceService.findById(id);
 
         if (invoiceOptional.isEmpty()) {
