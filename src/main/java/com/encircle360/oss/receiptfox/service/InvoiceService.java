@@ -3,7 +3,6 @@ package com.encircle360.oss.receiptfox.service;
 import com.encircle360.oss.receiptfox.model.Invoice;
 import com.encircle360.oss.receiptfox.model.InvoiceItem;
 import com.encircle360.oss.receiptfox.repository.InvoiceRepository;
-import com.encircle360.oss.receiptfox.util.LocaleUtils;
 import com.github.jhonnymertz.wkhtmltopdf.wrapper.Pdf;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -19,10 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -33,7 +29,10 @@ public class InvoiceService {
     private static final String TMP_INVOICE_DIR = "/tmp/invoices/";
     private static final String INVOICE_TEMPLATE = "invoice.ftl";
     private final Configuration freemarkerConfig;
-    private LocaleUtils localeUtils;
+
+    public Optional<Invoice> findById(String id) {
+        return invoiceRepository.findById(id);
+    }
 
     public Invoice save(Invoice invoice) throws IOException, InterruptedException, TemplateException {
         this.prepareInvoiceSave(invoice);
