@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,12 @@ public class Invoice {
 
     @Id
     private String id;
+
+    @Builder.Default
+    private LocalDate date = LocalDate.now();
+
+    private LocalDate dateFrom;
+    private LocalDate dateTo;
     private String reference; // some id or reference like billingAccountId for an invoice
     private AdressDetails sender;
     private AdressDetails receiver;

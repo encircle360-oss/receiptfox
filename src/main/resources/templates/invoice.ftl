@@ -1,4 +1,5 @@
 <#-- @ftlvariable name="invoice" type="com.encircle360.oss.receiptfox.model.Invoice" -->
+<#setting number_format=",##0.00">
 <!DOCTYPE html>
 <html>
 <head>
@@ -72,7 +73,8 @@
             </td>
             <td style="width:30%; vertical-align:top;">
                 <strong>${invoice.getSender().getCompanyName()}</strong><br>${invoice.getSender().getAddressLine1()}
-                <br>${invoice.getSender().getPostalCode()} ${invoice.getSender().getCity()}<br> <br>
+                <br>${invoice.getSender().getPostalCode()} ${invoice.getSender().getCity()}
+                <br>${invoice.getSender().getCountryDisplayName()}<br> <br>
                 <table>
                     <#if invoice.getSender().getPhoneNumber()??>
                         <tr>
@@ -106,17 +108,22 @@
     <table>
         <tr>
             <td style="font-size: 100%; font-weight: bold;">
-                Rechnung RE/12335
+                Invoice SEQUENCENBHERE
             </td>
             <td style="text-align:right; font-size: 90%;">
-                ${invoice.getSender().getCity()}, den 02.04.2020
+                ${invoice.getSender().getCity()}, ${invoice.getDate().format('yyyy-MM-dd')}
             </td>
         </tr>
         <tr>
             <td colspan="2" style="border-bottom: 1px solid #000;">
                 <br>
-                KundenNr.: SLY-1234<br>
-                Zeitraum: VON-BIS<br>
+                <#if invoice.getReference()??>
+                    Reference: ${invoice.getReference()}<br>
+                </#if>
+                <#if invoice.getDateFrom()?? && invoice.getDateTo()??>
+                    Zeitraum: ${invoice.getDateFrom().format('yyyy-MM-dd')} - ${invoice.getDateTo().format('yyyy-MM-dd')}
+                    <br>
+                </#if>
                 <br><br>
             </td>
         </tr>
@@ -139,7 +146,7 @@
                 <td>${item.getDescription()!""}</td>
                 <td style="text-align:right;">${item.getCount()}</td>
                 <td style="text-align:right;">${item.getNetPrice()} ${invoice.getCurrencySymbol()}</td>
-                <td style="text-align:right;">${item.getCount()*item.getNetPrice()} ${invoice.getCurrencySymbol()}</td>
+                <td style="text-align:right;">${item.getTotalNetPrice()} ${invoice.getCurrencySymbol()}</td>
             </tr>
         </#list>
         <tr>
@@ -198,8 +205,9 @@
     </table>
 
     <footer style="position:fixed; bottom:5mm; left:0; font-size: 70%; font-weight: bold; text-align: center; width: 100%; vertical-align:bottom;">
-        Geschäftsführer ${invoice.getSender().getFirstName()} ${invoice.getSender().getLastName()} · HRB HRBNRHERE ·
-        Amtsgericht Köln · VAT ID: ${invoice.getSender().getVatId()}
+        Managing Director ${invoice.getSender().getFirstName()} ${invoice.getSender().getLastName()} · Commercial
+        register number HRBNRHERE ·
+        Local court HERE · VAT ID: ${invoice.getSender().getVatId()}
 
         <#if invoice.getPayment()??>
             <br>

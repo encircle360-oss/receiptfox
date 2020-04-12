@@ -6,4 +6,4 @@ RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkh
     cp wkhtmltox/bin/wkhtmlto* /usr/bin/
 ADD /build/libs/*.jar /receiptfox.jar
 ENV SPRING_PROFILES_ACTIVE=production
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/receiptfox.jar"]
+ENTRYPOINT ["java","-Duser.language=en-US", "-Djava.security.egd=file:/dev/./urandom","-jar","/receiptfox.jar"]
