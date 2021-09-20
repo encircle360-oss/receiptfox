@@ -48,4 +48,8 @@ public class ContactDTO extends AbstractEntityDTO {
 
     @Schema(description = "The type of the contact.", example = "CUSTOMER")
     private ContactTypeDTO contactType;
+
+    @Schema(description = "The id of the organization unit.", example = "23")
+    private Long organizationUnitId;
+
 }

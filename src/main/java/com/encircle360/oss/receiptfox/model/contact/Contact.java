@@ -4,11 +4,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.Type;
 
 import com.encircle360.oss.receiptfox.model.AbstractEntity;
+import com.encircle360.oss.receiptfox.model.OrganizationUnit;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -46,5 +49,8 @@ public class Contact extends AbstractEntity {
 
     @Enumerated(EnumType.STRING)
     private ContactType contactType;
+
+    @ManyToOne
+    private OrganizationUnit organizationUnit;
 
 }

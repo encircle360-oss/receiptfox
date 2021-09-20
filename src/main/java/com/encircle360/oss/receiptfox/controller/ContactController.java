@@ -26,9 +26,11 @@ import com.encircle360.oss.receiptfox.dto.contact.api.CreateUpdateContactDTO;
 import com.encircle360.oss.receiptfox.dto.pagination.PageContainer;
 import com.encircle360.oss.receiptfox.mapping.ContactMapper;
 import com.encircle360.oss.receiptfox.mapping.ContactTypeMapper;
+import com.encircle360.oss.receiptfox.model.OrganizationUnit;
 import com.encircle360.oss.receiptfox.model.contact.Contact;
 import com.encircle360.oss.receiptfox.model.contact.ContactType;
 import com.encircle360.oss.receiptfox.service.ContactService;
+import com.encircle360.oss.receiptfox.service.OrganizationUnitService;
 import com.encircle360.oss.receiptfox.service.PageContainerFactory;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,6 +49,7 @@ public class ContactController {
     private final ContactMapper contactMapper = ContactMapper.INSTANCE;
 
     // Services
+    private final OrganizationUnitService organizationUnitService;
     private final PageContainerFactory pageContainerFactory;
     private final ContactService contactService;
 
@@ -101,11 +104,17 @@ public class ContactController {
         responses = {
             @ApiResponse(responseCode = "201", description = "Contact was created."),
             @ApiResponse(responseCode = "400", description = "The requestbody was not correct."),
+            @ApiResponse(responseCode = "424", description = "The organization unit was not found."),
         }
     )
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ContactDTO> create(@RequestBody @Valid CreateUpdateContactDTO createUpdateContactDTO) {
-        Contact contact = contactMapper.createFromDto(createUpdateContactDTO);
+        OrganizationUnit organizationUnit = organizationUnitService.get(createUpdateContactDTO.getOrganizationUnitId());
+        if (organizationUnit == null) {
+            return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).build();
+        }
+
+        Contact contact = contactMapper.createFromDto(createUpdateContactDTO, organizationUnit);
         contact = contactService.save(contact);
         ContactDTO contactDTO = contactMapper.toDto(contact);
         return ResponseEntity.status(HttpStatus.CREATED).body(contactDTO);
@@ -127,7 +136,11 @@ public class ContactController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        contactMapper.updateFromDto(createUpdateContactDTO, contact);
+        OrganizationUnit organizationUnit = organizationUnitService.get(createUpdateContactDTO.getOrganizationUnitId());
+        if (organizationUnit == null) {
+            return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).build();
+        }
+        contactMapper.updateFromDto(createUpdateContactDTO, organizationUnit, contact);
         contact = contactService.save(contact);
         ContactDTO contactDTO = contactMapper.toDto(contact);
 

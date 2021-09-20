@@ -5,8 +5,6 @@ import javax.validation.constraints.NotNull;
 import com.encircle360.oss.receiptfox.dto.contact.ContactTypeDTO;
 import com.encircle360.oss.receiptfox.dto.contact.SalutationDTO;
 import com.encircle360.oss.receiptfox.model.contact.Address;
-import com.encircle360.oss.receiptfox.model.contact.ContactType;
-import com.encircle360.oss.receiptfox.model.contact.Salutation;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -53,4 +51,8 @@ public class CreateUpdateContactDTO {
     @NotNull
     @Schema(description = "The type of the contact.", example = "CUSTOMER")
     private ContactTypeDTO contactType;
+
+    @NotNull
+    @Schema(description = "The id of the organization unit.", example = "23")
+    private Long organizationUnitId;
 }
