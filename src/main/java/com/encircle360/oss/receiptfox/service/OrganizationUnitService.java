@@ -13,14 +13,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OrganizationUnitService {
 
-    private OrganizationUnitRepository organizationUnitRepository;
+    private final OrganizationUnitRepository organizationUnitRepository;
 
     public Page<OrganizationUnit> getAll(Pageable pageable) {
         return organizationUnitRepository.findAll(pageable);
     }
 
     public OrganizationUnit get(Long id) {
-        if(id == null) {
+        if (id == null) {
             return null;
         }
         return organizationUnitRepository.findById(id).orElse(null);
@@ -28,5 +28,9 @@ public class OrganizationUnitService {
 
     public OrganizationUnit save(OrganizationUnit organizationUnit) {
         return organizationUnitRepository.save(organizationUnit);
+    }
+
+    public void delete(OrganizationUnit organizationUnit) {
+        organizationUnitRepository.delete(organizationUnit);
     }
 }

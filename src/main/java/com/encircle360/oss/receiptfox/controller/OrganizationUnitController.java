@@ -137,7 +137,7 @@ public class OrganizationUnitController {
         if (organizationUnit == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-
+        organizationUnitService.delete(organizationUnit);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
