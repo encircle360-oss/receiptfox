@@ -9,6 +9,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.constraints.NotNull;
+
+import com.encircle360.oss.receiptfox.dto.contact.AddressDTO;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,8 +20,12 @@ import java.util.Map;
 public class CreateInvoiceRequestDTO {
 
     private String reference; // some id or reference like billingAccountId for an invoice
-    private AddressDetailsDTO sender;
-    private AddressDetailsDTO receiver;
+
+    @NotNull
+    private AddressDTO sender;
+
+    @NotNull
+    private AddressDTO receiver;
     private PaymentDetailsDTO payment;
     private List<InvoiceItemDTO> items;
     private BigDecimal totalAmount;

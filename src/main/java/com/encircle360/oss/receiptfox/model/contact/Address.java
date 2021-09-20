@@ -1,6 +1,7 @@
-package com.encircle360.oss.receiptfox.model;
+package com.encircle360.oss.receiptfox.model.contact;
 
 import com.encircle360.oss.receiptfox.util.LocaleUtils;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,21 +11,16 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdressDetails {
+public class Address {
 
     private String companyName;
     private String firstName;
     private String lastName;
-    private String addressLine1;
-    private String addressLine2;
+    private String street;
+    private String houseNumber;
     private String postalCode;
     private String city;
     private String countryCode;
-    private String email;
-    private String phoneNumber;
-    private String faxNumber;
-    private String websiteUrl;
-    private String vatId;
 
     // TODO might be refactored in future for i18n
     public String getCountryDisplayName() {

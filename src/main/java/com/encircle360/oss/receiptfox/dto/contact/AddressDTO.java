@@ -1,4 +1,4 @@
-package com.encircle360.oss.receiptfox.dto;
+package com.encircle360.oss.receiptfox.dto.contact;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,19 +9,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddressDetailsDTO {
-
+public class AddressDTO {
     private String companyName;
     private String firstName;
     private String lastName;
-    private String addressLine1;
-    private String addressLine2;
+    private String street;
+    private String houseNumber;
     private String postalCode;
     private String city;
     private String countryCode;
-    private String email;
-    private String phoneNumber;
-    private String faxNumber;
-    private String websiteUrl;
-    private String vatId;
 }

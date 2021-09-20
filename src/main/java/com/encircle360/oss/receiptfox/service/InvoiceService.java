@@ -12,7 +12,6 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
@@ -27,16 +26,21 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
+
+    // todo separate to application.yml
     private static final String TMP_INVOICE_DIR = "/tmp/invoices/";
+
+    // todo separate to application.yml
     private static final String INVOICE_TEMPLATE = "invoice.ftl";
+
     private final Configuration freemarkerConfig;
 
-    public Optional<Invoice> findById(String id) {
-        return invoiceRepository.findById(id);
+    public Invoice findById(Long id) {
+        return invoiceRepository.findById(id).orElse(null);
     }
 
     public Invoice save(Invoice invoice) throws IOException, InterruptedException, TemplateException {
@@ -72,11 +76,15 @@ public class InvoiceService {
     }
 
     private void prepareInvoiceSave(Invoice invoice) throws IOException, InterruptedException, TemplateException {
-        if (invoice.isReverseCharge()) {
+        if(invoice == null || invoice.getItems() == null){
+            return;
+        }
+
+      /*  if (invoice.isReverseCharge()) {
             if (invoice.getReceiver().getVatId() == null || invoice.getReceiver().getVatId().isEmpty()) {
                 log.error("VAT ID is missing or empty for invoice with reference {}! This doesn't apply with the Reverse Charge regulations.", invoice.getReference());
             }
-        }
+        }*/
 
         // process invoice item calculations
         for (InvoiceItem item : invoice.getItems()) {

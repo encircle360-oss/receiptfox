@@ -1,1 +1,10 @@
-spring.mvc.locale: en_US
+spring:
+  mvc:
+    locale: en_US
+  datasource:
+    url: jdbc:postgresql://localhost:5432/receiptfox
+    username: user
+    password: user
+  jpa:
+    hibernate:
+      ddl-auto: update

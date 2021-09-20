@@ -20,11 +20,12 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/invoices")
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class InvoiceController {
 
-    private static InvoiceMapper invoiceMapper = InvoiceMapper.INSTANCE;
+    private final InvoiceMapper invoiceMapper = InvoiceMapper.INSTANCE;
+
     private final InvoiceService invoiceService;
 
     @PostMapping
@@ -42,17 +43,16 @@ public class InvoiceController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("{id}/download")
-    public ResponseEntity<?> downloadInvoiceDocument(@PathVariable String id, HttpServletResponse response) throws IOException {
-        Optional<Invoice> invoiceOptional = invoiceService.findById(id);
+    @GetMapping(value = "{id}/download", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<byte[]> downloadInvoiceDocument(@PathVariable Long id, HttpServletResponse response) throws IOException {
+        Invoice invoice = invoiceService.findById(id);
 
-        if (invoiceOptional.isEmpty()) {
+        if (invoice == null) {
             return ResponseEntity.notFound().build();
         }
 
-        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
         response.setHeader("Content-Disposition", "attachment; filename=\"invoice_" + id + ".pdf\"");
-        IOUtils.copy(new ByteArrayInputStream(invoiceOptional.get().getDocument()), response.getOutputStream());
+        IOUtils.copy(new ByteArrayInputStream(invoice.getDocument()), response.getOutputStream());
         response.flushBuffer();
 
         return ResponseEntity.ok().build();
