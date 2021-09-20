@@ -10,7 +10,7 @@ import com.encircle360.oss.receiptfox.dto.contact.ContactDTO;
 import com.encircle360.oss.receiptfox.dto.contact.api.CreateUpdateContactDTO;
 import com.encircle360.oss.receiptfox.model.contact.Contact;
 
-@Mapper
+@Mapper(uses = {ContactTypeMapper.class, SalutationMapper.class})
 public interface ContactMapper {
 
     ContactMapper INSTANCE = Mappers.getMapper(ContactMapper.class);

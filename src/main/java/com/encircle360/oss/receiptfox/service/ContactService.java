@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.encircle360.oss.receiptfox.model.contact.Contact;
+import com.encircle360.oss.receiptfox.model.contact.ContactType;
 import com.encircle360.oss.receiptfox.repository.ContactRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -29,5 +30,12 @@ public class ContactService {
 
     public void delete(Contact contact) {
         contactRepository.delete(contact);
+    }
+
+    public Page<Contact> filter(ContactType contactType, Pageable pageable) {
+        if(contactType == null) {
+            return findAll(pageable);
+        }
+        return contactRepository.findAllByContactType(contactType, pageable);
     }
 }

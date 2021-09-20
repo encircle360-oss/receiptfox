@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Address {
 
-    private String companyName;
+    private String company;
     private String firstName;
     private String lastName;
     private String street;
