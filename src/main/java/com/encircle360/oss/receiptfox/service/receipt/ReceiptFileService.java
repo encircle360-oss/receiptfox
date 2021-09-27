@@ -1,5 +1,7 @@
 package com.encircle360.oss.receiptfox.service.receipt;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
@@ -16,5 +18,9 @@ public class ReceiptFileService {
 
     public ReceiptFile get(final Long id) {
         return receiptFileRepository.findById(id).orElse(null);
+    }
+
+    public Page<ReceiptFile> findAll(Pageable pageable) {
+        return receiptFileRepository.findAll(pageable);
     }
 }
