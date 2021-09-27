@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.encircle360.oss.receiptfox.validation.receipt.ValidReceiptPosition;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ValidReceiptPosition
 public class ReceiptPositionDTO {
 
     @NotBlank

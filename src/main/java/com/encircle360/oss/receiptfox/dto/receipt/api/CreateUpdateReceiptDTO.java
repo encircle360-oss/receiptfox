@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import com.encircle360.oss.receiptfox.dto.contact.AddressDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptPositionDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptTypeDTO;
+import com.encircle360.oss.receiptfox.validation.receipt.ValidReceipt;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Data
+@ValidReceipt
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
