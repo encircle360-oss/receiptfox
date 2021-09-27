@@ -29,6 +29,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'org.postgresql:postgresql'
     implementation group: 'com.vladmihalcea', name: 'hibernate-types-52', version: '2.12.1'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.0.4'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
