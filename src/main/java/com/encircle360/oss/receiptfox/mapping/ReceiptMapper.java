@@ -1,0 +1,100 @@
+package com.encircle360.oss.receiptfox.mapping;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+
+import org.mapstruct.AfterMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.factory.Mappers;
+
+import com.encircle360.oss.receiptfox.dto.receipt.ReceiptDTO;
+import com.encircle360.oss.receiptfox.dto.receipt.api.CreateUpdateReceiptDTO;
+import com.encircle360.oss.receiptfox.model.OrganizationUnit;
+import com.encircle360.oss.receiptfox.model.contact.Contact;
+import com.encircle360.oss.receiptfox.model.receipt.Receipt;
+import com.encircle360.oss.receiptfox.model.receipt.ReceiptFile;
+import com.encircle360.oss.receiptfox.model.receipt.ReceiptPosition;
+
+@Mapper(uses = ReceiptPositionMapper.class)
+public interface ReceiptMapper {
+
+    ReceiptMapper INSTANCE = Mappers.getMapper(ReceiptMapper.class);
+
+    @Mapping(target = "contactId", source = "receipt.contact.id")
+    @Mapping(target = "receiptFileId", source = "receipt.receiptFile.id")
+    @Mapping(target = "organizationUnitId", source = "receipt.organizationUnit.id")
+    ReceiptDTO toDto(Receipt receipt);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "created", ignore = true)
+    @Mapping(target = "updated", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "contact", source = "contact")
+    @Mapping(target = "receiptFile", source = "receiptFile")
+    @Mapping(target = "meta", source = "createUpdateReceiptDTO.meta")
+    @Mapping(target = "organizationUnit", source = "organizationUnit")
+    Receipt createFromDto(CreateUpdateReceiptDTO createUpdateReceiptDTO, OrganizationUnit organizationUnit, ReceiptFile receiptFile, Contact contact);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "created", ignore = true)
+    @Mapping(target = "updated", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "contact", source = "contact")
+    @Mapping(target = "receiptFile", source = "receiptFile")
+    @Mapping(target = "meta", source = "createUpdateReceiptDTO.meta")
+    @Mapping(target = "organizationUnit", source = "organizationUnit")
+    void updateFromDto(CreateUpdateReceiptDTO createUpdateReceiptDTO, OrganizationUnit organizationUnit, ReceiptFile receiptFile, Contact contact, @MappingTarget Receipt receipt);
+
+    @AfterMapping
+    default void postProcess(@MappingTarget Receipt receipt) {
+        List<ReceiptPosition> positions = receipt.getPositions();
+        if (positions == null || positions.isEmpty()) {
+            return;
+        }
+
+        for (ReceiptPosition position : positions) {
+            BigDecimal singleNetAmount = position.getSingleNetAmount();
+            BigDecimal singleGrossAmount = position.getSingleGrossAmount();
+            BigDecimal taxMultiplier = BigDecimal.ONE.add(position.getTaxRatePercent());
+
+            // Both values are null should not be possible
+            // only for avoiding null pointers
+            if (singleNetAmount == null && singleGrossAmount == null) {
+                continue;
+            }
+
+            if (singleNetAmount != null) {
+                singleGrossAmount = singleNetAmount.multiply(taxMultiplier);
+                position.setSingleGrossAmount(singleGrossAmount);
+            } else {
+                singleNetAmount = singleGrossAmount.divide(taxMultiplier, 2, RoundingMode.HALF_UP);
+                position.setSingleNetAmount(singleNetAmount);
+            }
+
+            position.setTotalNetAmount(singleNetAmount.multiply(BigDecimal.valueOf(position.getQuantity())));
+            position.setTotalGrossAmount(position.getTotalNetAmount().multiply(taxMultiplier));
+        }
+
+        receipt.setPositions(positions);
+
+        BigDecimal totalGrossAmount = positions.stream()
+            .map(ReceiptPosition::getTotalGrossAmount)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalNetAmount = positions.stream()
+            .map(ReceiptPosition::getTotalNetAmount)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalTaxAmount = positions.stream()
+            .map(ReceiptPosition::getTotalTaxAmount)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        receipt.setGrossAmount(totalGrossAmount);
+        receipt.setNetAmount(totalNetAmount);
+        receipt.setTaxAmount(totalTaxAmount);
+    }
+
+}

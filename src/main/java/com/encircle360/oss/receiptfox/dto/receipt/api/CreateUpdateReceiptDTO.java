@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.validation.constraints.NotNull;
 
 import com.encircle360.oss.receiptfox.dto.contact.AddressDTO;
-import com.encircle360.oss.receiptfox.dto.receipt.ReceiptPositionDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptTypeDTO;
 import com.encircle360.oss.receiptfox.validation.receipt.ValidReceipt;
 
@@ -44,7 +43,7 @@ public class CreateUpdateReceiptDTO {
     private Long contactId;
 
     @NotNull
-    private List<ReceiptPositionDTO> positions;
+    private List<CreateUpdateReceiptPositionDTO> positions;
 
     // Templates handled by docs rabbit
     private String templateId;
