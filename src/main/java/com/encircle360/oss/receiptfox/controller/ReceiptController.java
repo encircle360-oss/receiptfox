@@ -35,6 +35,9 @@ import com.encircle360.oss.receiptfox.service.PageContainerFactory;
 import com.encircle360.oss.receiptfox.service.receipt.ReceiptFileService;
 import com.encircle360.oss.receiptfox.service.receipt.ReceiptService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 
 @Validated
@@ -43,15 +46,26 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/receipts")
 public class ReceiptController {
 
+    // mappers
     private final ReceiptMapper receiptMapper = ReceiptMapper.INSTANCE;
 
-    private final PageContainerFactory pageContainerFactory;
-
+    // services
     private final OrganizationUnitService organizationUnitService;
+    private final PageContainerFactory pageContainerFactory;
     private final ReceiptFileService receiptFileService;
     private final ReceiptService receiptService;
     private final ContactService contactService;
 
+    @Operation(
+        operationId = "listReceipts",
+        description = "Lists all receipts in database.",
+        parameters = {
+            @Parameter(name = "page", description = "The number of the page", example = "0"),
+            @Parameter(name = "size", description = "The size of the page", example = "50"),
+            @Parameter(name = "sort", description = "The sorting of the page", example = "id,desc"),
+            @Parameter(name = "organizationUnitId", description = "The id of an organization unit, the page should be filtered for.", example = "2")
+        }
+    )
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PageContainer<ReceiptDTO>> list(@RequestParam(name = "page", required = false) final Integer page,
                                                           @RequestParam(name = "size", required = false) final Integer size,
@@ -65,6 +79,14 @@ public class ReceiptController {
         return ResponseEntity.status(HttpStatus.OK).body(pageContainer);
     }
 
+    @Operation(
+        operationId = "getReceipt",
+        description = "Gets one receipt from database.",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Receipt was found."),
+            @ApiResponse(responseCode = "404", description = "The receipt was not found.")
+        }
+    )
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReceiptDTO> get(@PathVariable final Long id) {
         Receipt receipt = receiptService.get(id);
@@ -76,6 +98,15 @@ public class ReceiptController {
         return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
+    @Operation(
+        operationId = "createReceipt",
+        description = "Creates a receipt by the given payload.",
+        responses = {
+            @ApiResponse(responseCode = "201", description = "The receipt was created successfully."),
+            @ApiResponse(responseCode = "400", description = "The request body was not correct."),
+            @ApiResponse(responseCode = "424", description = "The linked organization unit does not exists.")
+        }
+    )
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReceiptDTO> create(@RequestBody @Valid final CreateUpdateReceiptDTO createUpdateReceiptDTO) {
         OrganizationUnit organizationUnit = organizationUnitService.get(createUpdateReceiptDTO.getOrganizationUnitId());
@@ -94,6 +125,16 @@ public class ReceiptController {
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
+    @Operation(
+        operationId = "updateReceipt",
+        description = "Update a receipt by the given payload and the id.",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "The receipt was updated successfully."),
+            @ApiResponse(responseCode = "400", description = "The request body was not correct."),
+            @ApiResponse(responseCode = "412", description = "The receipt is not in draft status."),
+            @ApiResponse(responseCode = "424", description = "The linked organization unit does not exists."),
+        }
+    )
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReceiptDTO> update(@PathVariable final Long id, @RequestBody @Valid final CreateUpdateReceiptDTO createUpdateReceiptDTO) {
         Receipt receipt = receiptService.get(id);
@@ -120,6 +161,14 @@ public class ReceiptController {
         return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
+    @Operation(
+        operationId = "deleteReceipt",
+        description = "Deletes a receipt from database",
+        responses = {
+            @ApiResponse(responseCode = "204", description = "Deletion was successful."),
+            @ApiResponse(responseCode = "404", description = "The receipt was not found.")
+        }
+    )
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> delete(@PathVariable final Long id) {
         Receipt receipt = receiptService.get(id);
