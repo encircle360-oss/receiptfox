@@ -20,6 +20,7 @@ import com.encircle360.oss.receiptfox.model.contact.Address;
 import com.encircle360.oss.receiptfox.model.contact.Contact;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -72,8 +73,9 @@ public class Receipt extends AbstractEntity {
 
     private String receiptNumber;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private ReceiptStatus status;
+    private ReceiptStatus status = ReceiptStatus.DRAFT;
 
     private LocalDate receiptDate;
 

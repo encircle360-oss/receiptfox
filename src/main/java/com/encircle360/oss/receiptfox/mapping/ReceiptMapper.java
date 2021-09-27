@@ -17,6 +17,7 @@ import com.encircle360.oss.receiptfox.model.contact.Contact;
 import com.encircle360.oss.receiptfox.model.receipt.Receipt;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptFile;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptPosition;
+import com.encircle360.oss.receiptfox.model.receipt.ReceiptStatus;
 
 @Mapper(uses = ReceiptPositionMapper.class)
 public interface ReceiptMapper {
@@ -27,6 +28,8 @@ public interface ReceiptMapper {
     @Mapping(target = "receiptFileId", source = "receipt.receiptFile.id")
     @Mapping(target = "organizationUnitId", source = "receipt.organizationUnit.id")
     ReceiptDTO toDto(Receipt receipt);
+
+    List<ReceiptDTO> toDtos(List<Receipt> receipts);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "created", ignore = true)
@@ -95,6 +98,10 @@ public interface ReceiptMapper {
         receipt.setGrossAmount(totalGrossAmount);
         receipt.setNetAmount(totalNetAmount);
         receipt.setTaxAmount(totalTaxAmount);
+
+        if (receipt.getStatus() == null) {
+            receipt.setStatus(ReceiptStatus.DRAFT);
+        }
     }
 
 }
