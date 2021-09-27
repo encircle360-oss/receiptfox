@@ -16,7 +16,6 @@ import org.hibernate.annotations.Type;
 
 import com.encircle360.oss.receiptfox.model.AbstractEntity;
 import com.encircle360.oss.receiptfox.model.OrganizationUnit;
-import com.encircle360.oss.receiptfox.model.ReceiptFile;
 import com.encircle360.oss.receiptfox.model.contact.Address;
 import com.encircle360.oss.receiptfox.model.contact.Contact;
 
