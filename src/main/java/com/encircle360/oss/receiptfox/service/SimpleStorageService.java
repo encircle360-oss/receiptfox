@@ -62,6 +62,10 @@ public class SimpleStorageService {
             .withEndpointConfiguration(endpointConfiguration)
             .withPathStyleAccessEnabled(true)
             .build();
+
+        if (!amazonS3Client.doesBucketExistV2(bucket)) {
+            createBucketIfNotExists(bucket);
+        }
     }
 
     public boolean save(String bucket, String path, byte[] data, String mimeType) {

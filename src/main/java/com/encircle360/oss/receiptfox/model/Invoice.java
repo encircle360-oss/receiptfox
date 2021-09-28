@@ -29,7 +29,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-
 public class Invoice extends AbstractEntity {
 
     @Builder.Default

@@ -1,11 +1,25 @@
 version: '3'
 
 services:
+  minio:
+    container_name: receiptfox-minio
+    image: minio/minio
+    command: "server --console-address \":9001\" /data"
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      - MINIO_ROOT_USER=access_key
+      - MINIO_ROOT_PASSWORD=secret_key
   postgres:
     container_name: receiptfox-postgres
     image: postgres:13.4
     ports:
       - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=user
+      - POSTGRES_USER=user
+      - POSTGRES_DB=receiptfox
   docsrabbit:
     container_name: receiptfox-docsrabbit
     image: registry.gitlab.com/encircle360-oss/docsrabbit/docsrabbit:v0.0.6
