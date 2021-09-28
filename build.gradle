@@ -62,6 +62,9 @@ dependencies {
     testImplementation "org.testcontainers:testcontainers:1.16.0"
     testImplementation "org.testcontainers:junit-jupiter:1.16.0"
     testImplementation "org.testcontainers:postgresql:1.16.0"
+
+    // aws sdk for s3 storage
+    compile group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.11.860'
 }
 
 test {
