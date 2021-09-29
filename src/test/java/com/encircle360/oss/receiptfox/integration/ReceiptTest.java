@@ -77,6 +77,7 @@ public class ReceiptTest extends AbstractTest {
             .singleNetAmount(BigDecimal.valueOf(145.23))
             .build();
 
+        // always use a prime number after decimal point to test calculation
         CreateUpdateReceiptPositionDTO createUpdateReceiptPositionDTO4 = CreateUpdateReceiptPositionDTO
             .builder()
             .title("test")
@@ -126,6 +127,9 @@ public class ReceiptTest extends AbstractTest {
 
         for (ReceiptPositionDTO position : receiptDTO.getPositions()) {
             BigDecimal quantity = BigDecimal.valueOf(position.getQuantity());
+            BigDecimal calculatedGross = position.getSingleNetAmount().multiply(position.getTaxRatePercent().add(BigDecimal.ONE));
+
+            Assertions.assertEquals(scaled(position.getSingleGrossAmount()), scaled(calculatedGross));
             Assertions.assertEquals(scaled(position.getSingleGrossAmount().multiply(quantity)), scaled(position.getTotalGrossAmount()));
             Assertions.assertEquals(scaled(position.getSingleNetAmount().multiply(quantity)), scaled(position.getTotalNetAmount()));
             Assertions.assertEquals(scaled(position.getSingleGrossAmount().subtract(position.getSingleNetAmount())), scaled(position.getSingleTaxAmount()));

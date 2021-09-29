@@ -92,7 +92,7 @@ public interface ReceiptMapper {
                 singleGrossAmount = singleNetAmount.multiply(taxMultiplier);
                 position.setSingleGrossAmount(singleGrossAmount);
             } else {
-                singleNetAmount = singleGrossAmount.divide(taxMultiplier, 10, RoundingMode.HALF_UP);
+                singleNetAmount = singleGrossAmount.divide(taxMultiplier, 20, RoundingMode.HALF_UP);
                 position.setSingleNetAmount(singleNetAmount);
             }
 
