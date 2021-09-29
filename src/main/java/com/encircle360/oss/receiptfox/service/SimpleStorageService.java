@@ -29,6 +29,8 @@ import com.amazonaws.services.s3.model.S3ObjectInputStream;
 @Service
 public class SimpleStorageService {
 
+    public final static String PDF_EXTENSION = "pdf";
+
     private AmazonS3 amazonS3Client;
 
     private final Base64.Encoder encoder = Base64.getEncoder();
@@ -140,18 +142,33 @@ public class SimpleStorageService {
         return encoder.encode(data);
     }
 
-    public String path(String fileName) {
+    public String pathForNewFile(String fileName) {
+        return pathForNewFile(getDefaultBucket(), fileName);
+    }
+
+    public String pathForNewFile(String bucket, String fileName) {
         LocalDate localDate = LocalDate.now();
         String monthPath = String.valueOf(localDate.getMonthValue());
         if (monthPath.length() == 1) {
             monthPath = "0" + monthPath;
         }
 
-        String hash = pathHash(fileName);
-        return localDate.getYear() + "/" + monthPath + "/" + hash + "/" + fileName;
+        Integer year = LocalDate.now().getYear();
+        String hash = md5Hash(fileName);
+        String path = buildPath(year, monthPath, hash, fileName);
+
+        while (exists(bucket, path)) {
+            String uuid = UUID.randomUUID().toString();
+            path = buildPath(year, monthPath, hash, uuid + "-" + fileName);
+        }
+        return path;
     }
 
-    private String pathHash(String s) {
+    private String buildPath(Integer year, String monthPath, String hash, String fileName) {
+        return year + "/" + monthPath + "/" + hash + "/" + fileName;
+    }
+
+    private String md5Hash(String s) {
         String md5 = MD5Encoder.encode(s.getBytes(StandardCharsets.UTF_8));
         return md5.toLowerCase().substring(0, 1);
     }

@@ -23,4 +23,8 @@ public class ReceiptFileService {
     public Page<ReceiptFile> findAll(Pageable pageable) {
         return receiptFileRepository.findAll(pageable);
     }
+
+    public ReceiptFile save(ReceiptFile receiptFile) {
+        return receiptFileRepository.save(receiptFile);
+    }
 }
