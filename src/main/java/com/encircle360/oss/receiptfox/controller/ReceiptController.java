@@ -181,7 +181,8 @@ public class ReceiptController {
         description = "Deletes a receipt from database",
         responses = {
             @ApiResponse(responseCode = "204", description = "Deletion was successful."),
-            @ApiResponse(responseCode = "404", description = "The receipt was not found.")
+            @ApiResponse(responseCode = "404", description = "The receipt was not found."),
+            @ApiResponse(responseCode = "412", description = "Completed receipts cannot be deleted, only if status is DRAFT.")
         }
     )
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -189,6 +190,10 @@ public class ReceiptController {
         Receipt receipt = receiptService.get(id);
         if (receipt == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        if (!receipt.getStatus().equals(ReceiptStatus.DRAFT)) {
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
         }
 
         receiptService.delete(receipt);

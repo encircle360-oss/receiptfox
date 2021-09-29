@@ -23,6 +23,7 @@ import com.encircle360.oss.receiptfox.dto.api.CreateUpdateTaxRateDTO;
 import com.encircle360.oss.receiptfox.dto.contact.AddressDTO;
 import com.encircle360.oss.receiptfox.dto.organizationunit.OrganizationUnitDTO;
 import com.encircle360.oss.receiptfox.dto.organizationunit.api.CreateUpdateOrganizationUnitDTO;
+import com.encircle360.oss.receiptfox.dto.pagination.PageContainer;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptPositionDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptTypeDTO;
@@ -140,6 +141,56 @@ public class ReceiptTest extends AbstractTest {
         Assertions.assertEquals(scaled(totalNetAmount), scaled(receiptDTO.getNetAmount()));
         Assertions.assertEquals(scaled(totalGrossAmount), scaled(receiptDTO.getGrossAmount()));
         Assertions.assertEquals(scaled(totalTaxAmount), scaled(receiptDTO.getTaxAmount()));
+
+        // remove one position and recheck calculations
+        positions = List.of(createUpdateReceiptPositionDTO, createUpdateReceiptPositionDTO2, createUpdateReceiptPositionDTO3);
+        createUpdateReceiptDTO.setPositions(positions);
+
+        MvcResult putResult = put(URL + "/" + receiptDTO.getId(), createUpdateReceiptDTO, status().isOk());
+        receiptDTO = mapResultToObject(putResult, ReceiptDTO.class);
+
+        Assertions.assertEquals(3, receiptDTO.getPositions().size());
+
+        totalNetAmount = BigDecimal.ZERO;
+        totalGrossAmount = BigDecimal.ZERO;
+        totalTaxAmount = BigDecimal.ZERO;
+
+        for (ReceiptPositionDTO position : receiptDTO.getPositions()) {
+            BigDecimal quantity = BigDecimal.valueOf(position.getQuantity());
+            Assertions.assertEquals(scaled(position.getSingleGrossAmount().multiply(quantity)), scaled(position.getTotalGrossAmount()));
+            Assertions.assertEquals(scaled(position.getSingleNetAmount().multiply(quantity)), scaled(position.getTotalNetAmount()));
+            Assertions.assertEquals(scaled(position.getSingleGrossAmount().subtract(position.getSingleNetAmount())), scaled(position.getSingleTaxAmount()));
+            Assertions.assertEquals(scaled(position.getSingleTaxAmount().multiply(quantity)), scaled(position.getTotalTaxAmount()));
+            Assertions.assertEquals(scaled(position.getTaxRatePercent()), scaled(taxRateDTO.getRate()));
+            Assertions.assertEquals(position.getTaxRateId(), taxRateDTO.getId());
+
+            totalNetAmount = totalNetAmount.add(position.getTotalNetAmount());
+            totalGrossAmount = totalGrossAmount.add(position.getTotalGrossAmount());
+            totalTaxAmount = totalTaxAmount.add(position.getTotalTaxAmount());
+        }
+
+        Assertions.assertEquals(scaled(totalNetAmount), scaled(receiptDTO.getNetAmount()));
+        Assertions.assertEquals(scaled(totalGrossAmount), scaled(receiptDTO.getGrossAmount()));
+        Assertions.assertEquals(scaled(totalTaxAmount), scaled(receiptDTO.getTaxAmount()));
+
+        MvcResult listResult = get(URL, status().isOk());
+        PageContainer<ReceiptDTO> pageContainer = mapResultToPageContainer(listResult, ReceiptDTO.class);
+
+        Assertions.assertEquals(1, pageContainer.getPagination().getTotalElements());
+        Assertions.assertNotNull(pageContainer.getContent());
+        Assertions.assertFalse(pageContainer.getContent().isEmpty());
+
+        delete(URL + "/" + receiptDTO.getId(), status().isNoContent());
+        delete(URL + "/" + receiptDTO.getId(), status().isNotFound());
+        get(URL + "/" + receiptDTO.getId(), status().isNotFound());
+        put(URL + "/" + receiptDTO.getId(), createUpdateReceiptDTO, status().isNotFound());
+
+        listResult = get(URL, status().isOk());
+        pageContainer = mapResultToPageContainer(listResult, ReceiptDTO.class);
+
+        Assertions.assertEquals(0, pageContainer.getPagination().getTotalElements());
+        Assertions.assertNotNull(pageContainer.getContent());
+        Assertions.assertTrue(pageContainer.getContent().isEmpty());
     }
 
     private BigDecimal scaled(BigDecimal bigDecimal) {
