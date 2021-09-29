@@ -1,4 +1,4 @@
-package com.encircle360.oss.receiptfox.statemachine;
+package com.encircle360.oss.receiptfox.util;
 
 import com.encircle360.oss.receiptfox.model.AbstractEntity;
 

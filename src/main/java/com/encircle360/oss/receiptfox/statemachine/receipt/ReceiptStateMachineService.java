@@ -12,7 +12,7 @@ import com.encircle360.oss.receiptfox.model.receipt.Receipt;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptEvent;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptStatus;
 import com.encircle360.oss.receiptfox.statemachine.StateMachineContextBuilder;
-import com.encircle360.oss.receiptfox.statemachine.StateMachineUtils;
+import com.encircle360.oss.receiptfox.util.StateMachineUtils;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;

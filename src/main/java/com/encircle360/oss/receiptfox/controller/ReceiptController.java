@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.encircle360.oss.receiptfox.dto.pagination.PageContainer;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.api.CreateUpdateReceiptDTO;
-import com.encircle360.oss.receiptfox.mapping.ReceiptMapper;
+import com.encircle360.oss.receiptfox.mapping.receipt.ReceiptMapper;
 import com.encircle360.oss.receiptfox.model.OrganizationUnit;
 import com.encircle360.oss.receiptfox.model.contact.Contact;
 import com.encircle360.oss.receiptfox.model.receipt.Receipt;

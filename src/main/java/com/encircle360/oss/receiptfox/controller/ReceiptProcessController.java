@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptEventDTO;
-import com.encircle360.oss.receiptfox.mapping.ReceiptEventMapper;
+import com.encircle360.oss.receiptfox.mapping.receipt.ReceiptEventMapper;
 import com.encircle360.oss.receiptfox.model.receipt.Receipt;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptEvent;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptStatus;

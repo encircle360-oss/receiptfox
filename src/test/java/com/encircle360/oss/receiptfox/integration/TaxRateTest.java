@@ -34,5 +34,21 @@ public class TaxRateTest extends AbstractTest {
 
         Assertions.assertEquals(createUpdateTaxRateDTO.getRate(), taxRateDTO.getRate());
         Assertions.assertEquals(createUpdateTaxRateDTO.getName(), taxRateDTO.getName());
+
+        CreateUpdateTaxRateDTO updateTaxRateDTO = CreateUpdateTaxRateDTO.builder()
+            .name("asdf")
+            .rate(BigDecimal.ZERO)
+            .build();
+        put(URL + "/" + taxRateDTO.getId(), updateTaxRateDTO, status().isMethodNotAllowed());
+
+        MvcResult getTaxRateResult = get(URL + "/" + taxRateDTO.getId(), status().isOk());
+        TaxRateDTO getTaxRateDTO = mapResultToObject(getTaxRateResult, TaxRateDTO.class);
+
+        Assertions.assertEquals(getTaxRateDTO.getRate(), taxRateDTO.getRate());
+        Assertions.assertEquals(getTaxRateDTO.getName(), taxRateDTO.getName());
+
+        delete(URL + "/" + taxRateDTO.getId(), status().isNoContent());
+        delete(URL + "/" + taxRateDTO.getId(), status().isNotFound());
+        get(URL + "/" + taxRateDTO.getId(), status().isNotFound());
     }
 }

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.encircle360.oss.receiptfox.dto.pagination.PageContainer;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptFileDTO;
-import com.encircle360.oss.receiptfox.mapping.ReceiptFileMapper;
+import com.encircle360.oss.receiptfox.mapping.receipt.ReceiptFileMapper;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptFile;
 import com.encircle360.oss.receiptfox.service.PageContainerFactory;
 import com.encircle360.oss.receiptfox.service.receipt.ReceiptFileService;

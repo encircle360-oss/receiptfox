@@ -1,4 +1,4 @@
-package com.encircle360.oss.receiptfox.mapping;
+package com.encircle360.oss.receiptfox.mapping.receipt;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

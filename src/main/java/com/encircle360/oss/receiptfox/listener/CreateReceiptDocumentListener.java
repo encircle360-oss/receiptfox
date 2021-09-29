@@ -3,7 +3,6 @@ package com.encircle360.oss.receiptfox.listener;
 import static com.encircle360.oss.receiptfox.service.SimpleStorageService.PDF_EXTENSION;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.context.event.EventListener;
@@ -23,7 +22,6 @@ import com.encircle360.oss.receiptfox.model.receipt.ReceiptFile;
 import com.encircle360.oss.receiptfox.service.SimpleStorageService;
 import com.encircle360.oss.receiptfox.service.receipt.ReceiptFileService;
 import com.encircle360.oss.receiptfox.service.receipt.ReceiptService;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -48,7 +46,7 @@ public class CreateReceiptDocumentListener {
         }
 
         String templateId = receipt.getTemplateId();
-        if(templateId == null) {
+        if (templateId == null) {
             templateId = receipt.getOrganizationUnit().getDefaultTemplateId();
         }
 
@@ -57,37 +55,45 @@ public class CreateReceiptDocumentListener {
             throw new IllegalArgumentException("Template not found");
         }
 
-        HashMap<String, JsonNode> model = new HashMap<>();
-
         RenderRequestDTO renderRequestDTO = RenderRequestDTO
             .builder()
             .templateId(templateId)
             .format(RenderFormatDTO.PDF)
-            .model(model)
+            .model(receipt)
             .build();
 
         ResponseEntity<RenderResultDTO> resultResponseEntity = renderClient.render(renderRequestDTO);
-        if (!resultResponseEntity.getStatusCode().is2xxSuccessful()) {
+        RenderResultDTO result = resultResponseEntity.getBody();
+
+        if (!resultResponseEntity.getStatusCode().is2xxSuccessful() || result == null || result.getBase64() == null) {
             throw new IllegalStateException("Rendering was not successful.");
         }
 
-        RenderResultDTO result = resultResponseEntity.getBody();
-        if (result == null || result.getBase64() == null) {
-            throw new IllegalStateException("Rendering was not successful.");
+        byte[] data = simpleStorageService.decode(result.getBase64());
+        ReceiptFile receiptFile = receipt.getReceiptFile();
+
+        // if there is already a file override it
+        if (receiptFile != null) {
+            boolean saved = simpleStorageService.save(receiptFile.getS3Bucket(), receiptFile.getS3Path(), data, result.getMimeType());
+
+            if (!saved) {
+                throw new IOException("File was not saved");
+            }
+            receiptFileService.save(receiptFile);
+            return;
         }
 
         String receiptNumber = receipt.getReceiptNumber();
         String fileName = receiptNumber + "." + PDF_EXTENSION;
 
         String path = simpleStorageService.pathForNewFile(fileName);
-        byte[] data = simpleStorageService.decode(result.getBase64());
         boolean saved = simpleStorageService.save(path, data, result.getMimeType());
 
         if (!saved) {
             throw new IOException("File was not saved");
         }
 
-        ReceiptFile receiptFile = ReceiptFile
+        receiptFile = ReceiptFile
             .builder()
             .s3Path(path)
             .s3Bucket(simpleStorageService.getDefaultBucket())

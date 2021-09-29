@@ -23,7 +23,7 @@ public abstract class AbstractRenderRequestDTO {
     private RenderFormatDTO format;
 
     @Schema(name = "model", description = "Map with all attributes needed for rendering the template")
-    private HashMap<String, JsonNode> model;
+    private Object model;
 
     @Schema(name = "locale", description = "The locale which should be used for rendering, only needed when using filesystem", example = "de")
     private String locale;
