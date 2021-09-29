@@ -48,6 +48,10 @@ public class CreateReceiptDocumentListener {
         }
 
         String templateId = receipt.getTemplateId();
+        if(templateId == null) {
+            templateId = receipt.getOrganizationUnit().getDefaultTemplateId();
+        }
+
         ResponseEntity<TemplateDTO> templateResponseEntity = templateClient.get(templateId);
         if (templateResponseEntity.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
             throw new IllegalArgumentException("Template not found");

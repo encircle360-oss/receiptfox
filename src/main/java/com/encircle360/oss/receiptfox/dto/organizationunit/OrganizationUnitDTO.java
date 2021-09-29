@@ -29,4 +29,7 @@ public class OrganizationUnitDTO extends AbstractEntityDTO {
 
     @Schema(description = "Number pattern for receipts of the organization unit.")
     private String receiptNumberPattern;
+
+    @Schema(description = "A default template which is used for receipts")
+    private String defaultTemplateId;
 }

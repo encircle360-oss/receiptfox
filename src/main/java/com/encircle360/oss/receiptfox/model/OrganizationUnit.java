@@ -31,4 +31,6 @@ public class OrganizationUnit extends AbstractEntity {
     private String organizationImage;
 
     private String receiptNumberPattern;
+
+    private String defaultTemplateId;
 }
