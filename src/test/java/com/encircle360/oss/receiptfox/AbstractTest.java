@@ -76,6 +76,16 @@ public abstract class AbstractTest {
         return put(uri, getObjectMapper().writeValueAsString(object), expect);
     }
 
+    protected MvcResult emptyPut(String uri, ResultMatcher expect) throws Exception {
+        return getMvc().perform(
+                MockMvcRequestBuilders.put(uri)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(expect)
+            .andReturn();
+    }
+
     protected MvcResult put(String uri, String body, ResultMatcher expect) throws Exception {
         return getMvc().perform(
                 MockMvcRequestBuilders.put(uri)

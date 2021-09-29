@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,7 @@ import com.encircle360.oss.receiptfox.dto.organizationunit.OrganizationUnitDTO;
 import com.encircle360.oss.receiptfox.dto.organizationunit.api.CreateUpdateOrganizationUnitDTO;
 import com.encircle360.oss.receiptfox.dto.pagination.PageContainer;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptDTO;
+import com.encircle360.oss.receiptfox.dto.receipt.ReceiptEventDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptPositionDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptTypeDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.UnitDTO;
@@ -195,6 +197,45 @@ public class ReceiptTest extends AbstractTest {
         Assertions.assertEquals(0, pageContainer.getPagination().getTotalElements());
         Assertions.assertNotNull(pageContainer.getContent());
         Assertions.assertTrue(pageContainer.getContent().isEmpty());
+    }
+
+    @Test
+    public void test_processing() throws Exception {
+        TemplateDTO templateDTO = createTestTemplate();
+        OrganizationUnitDTO organizationUnitDTO = createTestOrganizationUnit();
+        TaxRateDTO taxRateDTO = createTestTaxRate();
+
+        AddressDTO emptyAddress = AddressDTO.builder().build();
+
+        CreateUpdateReceiptPositionDTO createUpdateReceiptPositionDTO = CreateUpdateReceiptPositionDTO
+            .builder()
+            .title("test")
+            .taxRateId(taxRateDTO.getId())
+            .quantity(2)
+            .unit(UnitDTO.PIECES)
+            .singleGrossAmount(BigDecimal.valueOf(119))
+            .build();
+
+        CreateUpdateReceiptDTO createUpdateReceiptDTO = CreateUpdateReceiptDTO
+            .builder()
+            .receiptType(ReceiptTypeDTO.INVOICE)
+            .receiptDate(LocalDate.now())
+            .organizationUnitId(organizationUnitDTO.getId())
+            .templateId(templateDTO.getId())
+            .receiverAddress(emptyAddress)
+            .senderAddress(emptyAddress)
+            .receiptNumber(UUID.randomUUID().toString())
+            .deliveryDate(LocalDate.now())
+            .positions(List.of(createUpdateReceiptPositionDTO))
+            .build();
+
+        MvcResult createdResult = post(URL, createUpdateReceiptDTO, status().isCreated());
+        ReceiptDTO receiptDTO = mapResultToObject(createdResult, ReceiptDTO.class);
+
+        emptyPut("/process-receipts/" + receiptDTO.getId() + "/" + ReceiptEventDTO.SET_OPEN, status().isNoContent());
+        emptyPut("/process-receipts/" + receiptDTO.getId() + "/" + ReceiptEventDTO.SET_OPEN, status().isPreconditionFailed());
+        emptyPut("/process-receipts/" + receiptDTO.getId() + "/" + ReceiptEventDTO.SET_CANCELED, status().isNoContent());
+        emptyPut("/process-receipts/" + receiptDTO.getId() + "/" + ReceiptEventDTO.SET_PAID, status().isPreconditionFailed());
     }
 
     private BigDecimal scaled(BigDecimal bigDecimal) {

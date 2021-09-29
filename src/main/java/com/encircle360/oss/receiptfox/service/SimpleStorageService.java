@@ -2,14 +2,14 @@ package com.encircle360.oss.receiptfox.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.time.LocalDate;
 import java.util.Base64;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
+import javax.xml.bind.DatatypeConverter;
 
-import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
@@ -154,7 +154,7 @@ public class SimpleStorageService {
         }
 
         Integer year = LocalDate.now().getYear();
-        String hash = md5Hash(fileName);
+        String hash = folderHash(fileName);
         String path = buildPath(year, monthPath, hash, fileName);
 
         while (exists(bucket, path)) {
@@ -168,8 +168,19 @@ public class SimpleStorageService {
         return year + "/" + monthPath + "/" + hash + "/" + fileName;
     }
 
-    private String md5Hash(String s) {
-        String md5 = MD5Encoder.encode(s.getBytes(StandardCharsets.UTF_8));
-        return md5.toLowerCase().substring(0, 1);
+    private String folderHash(String s) {
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (Exception e) {
+            return null;
+        }
+
+        md.update(s.getBytes());
+        byte[] digest = md.digest();
+
+        return DatatypeConverter
+            .printHexBinary(digest).toLowerCase().substring(0, 2);
+
     }
 }
