@@ -243,10 +243,12 @@ public class ReceiptTest extends AbstractTest {
     }
 
     private TemplateDTO createTestTemplate() throws Exception {
+        String testHtml = "<h1>I'm a test</h1><br/>${id} - ${receiptNumber!\"\"}";
+
         CreateUpdateTemplateDTO createUpdateTemplateDTO = CreateUpdateTemplateDTO
             .builder()
             .name("test")
-            .content("<h1>I'm a test</h1>")
+            .content(testHtml)
             .build();
 
         ResponseEntity<TemplateDTO> createdTemplate = templateClient.create(createUpdateTemplateDTO);
