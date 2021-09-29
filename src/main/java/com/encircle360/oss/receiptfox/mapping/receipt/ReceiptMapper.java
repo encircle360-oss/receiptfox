@@ -32,24 +32,43 @@ public interface ReceiptMapper {
     List<ReceiptDTO> toDtos(List<Receipt> receipts);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", ignore = true)
     @Mapping(target = "created", ignore = true)
     @Mapping(target = "updated", ignore = true)
     @Mapping(target = "version", ignore = true)
+    @Mapping(target = "taxAmount", ignore = true)
+    @Mapping(target = "netAmount", ignore = true)
+    @Mapping(target = "grossAmount", ignore = true)
     @Mapping(target = "contact", source = "contact")
+    @Mapping(target = "positions", source = "positions")
     @Mapping(target = "receiptFile", source = "receiptFile")
     @Mapping(target = "meta", source = "createUpdateReceiptDTO.meta")
     @Mapping(target = "organizationUnit", source = "organizationUnit")
-    Receipt createFromDto(CreateUpdateReceiptDTO createUpdateReceiptDTO, OrganizationUnit organizationUnit, ReceiptFile receiptFile, Contact contact);
+    Receipt createFromDto(CreateUpdateReceiptDTO createUpdateReceiptDTO,
+                          List<ReceiptPosition> positions,
+                          OrganizationUnit organizationUnit,
+                          ReceiptFile receiptFile,
+                          Contact contact);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", ignore = true)
     @Mapping(target = "created", ignore = true)
     @Mapping(target = "updated", ignore = true)
     @Mapping(target = "version", ignore = true)
+    @Mapping(target = "taxAmount", ignore = true)
+    @Mapping(target = "netAmount", ignore = true)
+    @Mapping(target = "grossAmount", ignore = true)
     @Mapping(target = "contact", source = "contact")
+    @Mapping(target = "positions", source = "positions")
     @Mapping(target = "receiptFile", source = "receiptFile")
     @Mapping(target = "meta", source = "createUpdateReceiptDTO.meta")
     @Mapping(target = "organizationUnit", source = "organizationUnit")
-    void updateFromDto(CreateUpdateReceiptDTO createUpdateReceiptDTO, OrganizationUnit organizationUnit, ReceiptFile receiptFile, Contact contact, @MappingTarget Receipt receipt);
+    void updateFromDto(CreateUpdateReceiptDTO createUpdateReceiptDTO,
+                       List<ReceiptPosition> positions,
+                       OrganizationUnit organizationUnit,
+                       ReceiptFile receiptFile,
+                       Contact contact,
+                       @MappingTarget Receipt receipt);
 
     @AfterMapping
     default void postProcess(@MappingTarget Receipt receipt) {

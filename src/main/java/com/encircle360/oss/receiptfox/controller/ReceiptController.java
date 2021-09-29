@@ -1,6 +1,7 @@
 package com.encircle360.oss.receiptfox.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -24,14 +25,18 @@ import com.encircle360.oss.receiptfox.dto.pagination.PageContainer;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.api.CreateUpdateReceiptDTO;
 import com.encircle360.oss.receiptfox.mapping.receipt.ReceiptMapper;
+import com.encircle360.oss.receiptfox.mapping.receipt.ReceiptPositionMapper;
 import com.encircle360.oss.receiptfox.model.OrganizationUnit;
+import com.encircle360.oss.receiptfox.model.TaxRate;
 import com.encircle360.oss.receiptfox.model.contact.Contact;
 import com.encircle360.oss.receiptfox.model.receipt.Receipt;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptFile;
+import com.encircle360.oss.receiptfox.model.receipt.ReceiptPosition;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptStatus;
 import com.encircle360.oss.receiptfox.service.ContactService;
 import com.encircle360.oss.receiptfox.service.OrganizationUnitService;
 import com.encircle360.oss.receiptfox.service.PageContainerFactory;
+import com.encircle360.oss.receiptfox.service.TaxRateService;
 import com.encircle360.oss.receiptfox.service.receipt.ReceiptFileService;
 import com.encircle360.oss.receiptfox.service.receipt.ReceiptService;
 
@@ -47,6 +52,7 @@ import lombok.RequiredArgsConstructor;
 public class ReceiptController {
 
     // mappers
+    private final ReceiptPositionMapper receiptPositionMapper = ReceiptPositionMapper.INSTANCE;
     private final ReceiptMapper receiptMapper = ReceiptMapper.INSTANCE;
 
     // services
@@ -55,6 +61,7 @@ public class ReceiptController {
     private final ReceiptFileService receiptFileService;
     private final ReceiptService receiptService;
     private final ContactService contactService;
+    private final TaxRateService taxRateService;
 
     @Operation(
         operationId = "listReceipts",
@@ -117,7 +124,13 @@ public class ReceiptController {
             return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).build();
         }
 
-        Receipt receipt = receiptMapper.createFromDto(createUpdateReceiptDTO, organizationUnit, receiptFile, contact);
+        List<ReceiptPosition> receiptPositions = receiptPositions(createUpdateReceiptDTO);
+
+        if (receiptPositions.contains(null)) {
+            return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).build();
+        }
+
+        Receipt receipt = receiptMapper.createFromDto(createUpdateReceiptDTO, receiptPositions, organizationUnit, receiptFile, contact);
         receipt = receiptService.save(receipt);
 
         ReceiptDTO dto = receiptMapper.toDto(receipt);
@@ -150,11 +163,13 @@ public class ReceiptController {
         ReceiptFile receiptFile = receiptFileService.get(createUpdateReceiptDTO.getReceiptFileId());
         Contact contact = contactService.get(createUpdateReceiptDTO.getContactId());
 
-        if (organizationUnit == null) {
+        List<ReceiptPosition> receiptPositions = receiptPositions(createUpdateReceiptDTO);
+
+        if (receiptPositions.contains(null) || organizationUnit == null) {
             return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).build();
         }
 
-        receiptMapper.updateFromDto(createUpdateReceiptDTO, organizationUnit, receiptFile, contact, receipt);
+        receiptMapper.updateFromDto(createUpdateReceiptDTO, receiptPositions, organizationUnit, receiptFile, contact, receipt);
         receipt = receiptService.save(receipt);
         ReceiptDTO dto = receiptMapper.toDto(receipt);
 
@@ -179,5 +194,19 @@ public class ReceiptController {
         receiptService.delete(receipt);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    private List<ReceiptPosition> receiptPositions(CreateUpdateReceiptDTO createUpdateReceiptDTO) {
+        return createUpdateReceiptDTO
+            .getPositions()
+            .stream()
+            .map(createUpdateReceiptPositionDTO -> {
+                TaxRate taxRate = taxRateService.get(createUpdateReceiptPositionDTO.getTaxRateId());
+                if (taxRate == null) {
+                    return null;
+                }
+                return receiptPositionMapper.fromDto(createUpdateReceiptPositionDTO, taxRate);
+            })
+            .collect(Collectors.toList());
     }
 }

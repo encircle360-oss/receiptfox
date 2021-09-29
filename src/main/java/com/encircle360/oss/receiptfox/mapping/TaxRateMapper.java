@@ -3,6 +3,7 @@ package com.encircle360.oss.receiptfox.mapping;
 import java.util.List;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import com.encircle360.oss.receiptfox.dto.TaxRateDTO;
@@ -18,5 +19,9 @@ public interface TaxRateMapper {
 
     List<TaxRateDTO> toDtos(List<TaxRate> taxRates);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "created", ignore = true)
+    @Mapping(target = "updated", ignore = true)
+    @Mapping(target = "version", ignore = true)
     TaxRate createFromDto(CreateUpdateTaxRateDTO createUpdateTaxRateDTO);
 }
