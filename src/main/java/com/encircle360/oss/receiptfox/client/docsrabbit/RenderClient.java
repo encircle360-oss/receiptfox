@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.encircle360.oss.receiptfox.client.docsrabbit.dto.render.RenderRequestDTO;
 import com.encircle360.oss.receiptfox.client.docsrabbit.dto.render.RenderResultDTO;
 
-@FeignClient(name = "renderClient", url = "http://docsrabbit-service:50005")
+@FeignClient(name = "renderClient", url = "http://docsrabbit-service:50005/render")
 public interface RenderClient {
 
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)

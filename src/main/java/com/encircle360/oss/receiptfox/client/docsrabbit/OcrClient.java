@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.encircle360.oss.receiptfox.client.docsrabbit.dto.OCRResultDTO;
 
-@FeignClient(value = "ocrClient", url = "http://docsrabbit-service:50005")
+@FeignClient(value = "ocrClient", url = "http://docsrabbit-service:50005/ocr")
 public interface OcrClient {
 
     @PostMapping("")

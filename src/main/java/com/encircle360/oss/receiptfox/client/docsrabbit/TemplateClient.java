@@ -18,7 +18,7 @@ import com.encircle360.oss.receiptfox.client.docsrabbit.dto.template.CreateUpdat
 import com.encircle360.oss.receiptfox.client.docsrabbit.dto.template.TemplateDTO;
 import com.encircle360.oss.receiptfox.dto.pagination.PageContainer;
 
-@FeignClient(name = "templateClient", url = "http://docsrabbit-service:50005", decode404 = true)
+@FeignClient(name = "templateClient", url = "http://docsrabbit-service:50005/templates", decode404 = true)
 public interface TemplateClient {
 
     @GetMapping("")

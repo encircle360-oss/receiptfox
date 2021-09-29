@@ -17,6 +17,9 @@ public class ReceiptFileService {
     private final ReceiptFileRepository receiptFileRepository;
 
     public ReceiptFile get(final Long id) {
+        if(id == null) {
+            return null;
+        }
         return receiptFileRepository.findById(id).orElse(null);
     }
 

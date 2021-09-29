@@ -21,6 +21,9 @@ public class ContactService {
     }
 
     public Contact get(Long id) {
+        if(id == null) {
+            return null;
+        }
         return contactRepository.findById(id).orElse(null);
     }
 
