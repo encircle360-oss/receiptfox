@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import com.encircle360.oss.receiptfox.dto.contact.AddressDTO;
@@ -51,7 +52,7 @@ public class CreateUpdateReceiptDTO {
 
     @NotNull
     @Schema(description = "List of all positions in this invoice.")
-    private List<CreateUpdateReceiptPositionDTO> positions;
+    private List<@Valid CreateUpdateReceiptPositionDTO> positions;
 
     @Schema(description = "A docsrabbit template id, which is related to this invoice.")
     private String templateId;

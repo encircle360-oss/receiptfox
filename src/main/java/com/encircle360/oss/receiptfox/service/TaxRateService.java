@@ -20,6 +20,9 @@ public class TaxRateService {
     }
 
     public TaxRate get(Long id) {
+        if(id == null){
+            return null;
+        }
         return taxRateRepository.findById(id).orElse(null);
     }
 

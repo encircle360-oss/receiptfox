@@ -2,8 +2,8 @@ package com.encircle360.oss.receiptfox.integration;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
@@ -17,10 +17,14 @@ import com.encircle360.oss.receiptfox.AbstractTest;
 import com.encircle360.oss.receiptfox.client.docsrabbit.TemplateClient;
 import com.encircle360.oss.receiptfox.client.docsrabbit.dto.template.CreateUpdateTemplateDTO;
 import com.encircle360.oss.receiptfox.client.docsrabbit.dto.template.TemplateDTO;
+import com.encircle360.oss.receiptfox.dto.TaxRateDTO;
+import com.encircle360.oss.receiptfox.dto.api.CreateUpdateTaxRateDTO;
 import com.encircle360.oss.receiptfox.dto.contact.AddressDTO;
 import com.encircle360.oss.receiptfox.dto.organizationunit.OrganizationUnitDTO;
 import com.encircle360.oss.receiptfox.dto.organizationunit.api.CreateUpdateOrganizationUnitDTO;
+import com.encircle360.oss.receiptfox.dto.receipt.ReceiptDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptTypeDTO;
+import com.encircle360.oss.receiptfox.dto.receipt.UnitDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.api.CreateUpdateReceiptDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.api.CreateUpdateReceiptPositionDTO;
 
@@ -39,8 +43,20 @@ public class ReceiptTest extends AbstractTest {
 
         TemplateDTO templateDTO = createTestTemplate();
         OrganizationUnitDTO organizationUnitDTO = createTestOrganizationUnit();
+        TaxRateDTO taxRateDTO = createTestTaxRate();
+
         AddressDTO emptyAddress = AddressDTO.builder().build();
-        List<CreateUpdateReceiptPositionDTO> positions = new ArrayList<>();
+
+        CreateUpdateReceiptPositionDTO createUpdateReceiptPositionDTO = CreateUpdateReceiptPositionDTO
+            .builder()
+            .title("test")
+            .taxRateId(taxRateDTO.getId())
+            .quantity(2)
+            .unit(UnitDTO.PIECES)
+            .singleGrossAmount(BigDecimal.valueOf(119))
+            .build();
+
+        List<CreateUpdateReceiptPositionDTO> positions = List.of(createUpdateReceiptPositionDTO);
 
         createUpdateReceiptDTO = CreateUpdateReceiptDTO
             .builder()
@@ -54,7 +70,9 @@ public class ReceiptTest extends AbstractTest {
             .deliveryDate(LocalDate.now())
             .positions(positions)
             .build();
+
         MvcResult createdResult = post(URL, createUpdateReceiptDTO, status().isCreated());
+        ReceiptDTO receiptDTO = mapResultToObject(createdResult, ReceiptDTO.class);
 
     }
 
@@ -80,5 +98,15 @@ public class ReceiptTest extends AbstractTest {
 
         MvcResult createResult = post("/organization-units", createUpdateOrganizationUnitDTO, status().isCreated());
         return mapResultToObject(createResult, OrganizationUnitDTO.class);
+    }
+
+    private TaxRateDTO createTestTaxRate() throws Exception {
+        CreateUpdateTaxRateDTO createUpdateTaxRateDTO = CreateUpdateTaxRateDTO
+            .builder()
+            .name("test")
+            .rate(BigDecimal.valueOf(0.19))
+            .build();
+        MvcResult createResult = post("/tax-rates", createUpdateTaxRateDTO, status().isCreated());
+        return mapResultToObject(createResult, TaxRateDTO.class);
     }
 }
