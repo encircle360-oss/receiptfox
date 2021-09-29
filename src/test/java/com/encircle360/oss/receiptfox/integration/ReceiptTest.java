@@ -3,6 +3,7 @@ package com.encircle360.oss.receiptfox.integration;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import com.encircle360.oss.receiptfox.dto.contact.AddressDTO;
 import com.encircle360.oss.receiptfox.dto.organizationunit.OrganizationUnitDTO;
 import com.encircle360.oss.receiptfox.dto.organizationunit.api.CreateUpdateOrganizationUnitDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptDTO;
+import com.encircle360.oss.receiptfox.dto.receipt.ReceiptPositionDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptTypeDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.UnitDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.api.CreateUpdateReceiptDTO;
@@ -56,7 +58,39 @@ public class ReceiptTest extends AbstractTest {
             .singleGrossAmount(BigDecimal.valueOf(119))
             .build();
 
-        List<CreateUpdateReceiptPositionDTO> positions = List.of(createUpdateReceiptPositionDTO);
+        CreateUpdateReceiptPositionDTO createUpdateReceiptPositionDTO2 = CreateUpdateReceiptPositionDTO
+            .builder()
+            .title("test")
+            .taxRateId(taxRateDTO.getId())
+            .quantity(5)
+            .unit(UnitDTO.PIECES)
+            .singleNetAmount(BigDecimal.valueOf(100))
+            .build();
+
+        CreateUpdateReceiptPositionDTO createUpdateReceiptPositionDTO3 = CreateUpdateReceiptPositionDTO
+            .builder()
+            .title("test")
+            .taxRateId(taxRateDTO.getId())
+            .quantity(5)
+            .unit(UnitDTO.PIECES)
+            .singleNetAmount(BigDecimal.valueOf(145.23))
+            .build();
+
+        CreateUpdateReceiptPositionDTO createUpdateReceiptPositionDTO4 = CreateUpdateReceiptPositionDTO
+            .builder()
+            .title("test")
+            .taxRateId(taxRateDTO.getId())
+            .quantity(5)
+            .unit(UnitDTO.PIECES)
+            .singleGrossAmount(BigDecimal.valueOf(145.17))
+            .build();
+
+        List<CreateUpdateReceiptPositionDTO> positions = List.of(
+            createUpdateReceiptPositionDTO,
+            createUpdateReceiptPositionDTO2,
+            createUpdateReceiptPositionDTO3,
+            createUpdateReceiptPositionDTO4
+        );
 
         createUpdateReceiptDTO = CreateUpdateReceiptDTO
             .builder()
@@ -74,6 +108,42 @@ public class ReceiptTest extends AbstractTest {
         MvcResult createdResult = post(URL, createUpdateReceiptDTO, status().isCreated());
         ReceiptDTO receiptDTO = mapResultToObject(createdResult, ReceiptDTO.class);
 
+        Assertions.assertEquals(createUpdateReceiptDTO.getReceiptType(), receiptDTO.getReceiptType());
+        Assertions.assertEquals(createUpdateReceiptDTO.getReceiptDate(), receiptDTO.getReceiptDate());
+        Assertions.assertEquals(createUpdateReceiptDTO.getOrganizationUnitId(), receiptDTO.getOrganizationUnitId());
+        Assertions.assertEquals(createUpdateReceiptDTO.getTemplateId(), receiptDTO.getTemplateId());
+        Assertions.assertEquals(createUpdateReceiptDTO.getReceiverAddress(), receiptDTO.getReceiverAddress());
+        Assertions.assertEquals(createUpdateReceiptDTO.getSenderAddress(), receiptDTO.getSenderAddress());
+        Assertions.assertEquals(createUpdateReceiptDTO.getReceiptNumber(), receiptDTO.getReceiptNumber());
+        Assertions.assertEquals(createUpdateReceiptDTO.getDeliveryDate(), receiptDTO.getDeliveryDate());
+        Assertions.assertNotNull(receiptDTO.getPositions());
+        Assertions.assertEquals(4, receiptDTO.getPositions().size());
+
+        BigDecimal totalNetAmount = BigDecimal.ZERO;
+        BigDecimal totalGrossAmount = BigDecimal.ZERO;
+        BigDecimal totalTaxAmount = BigDecimal.ZERO;
+
+        for (ReceiptPositionDTO position : receiptDTO.getPositions()) {
+            BigDecimal quantity = BigDecimal.valueOf(position.getQuantity());
+            Assertions.assertEquals(scaled(position.getSingleGrossAmount().multiply(quantity)), scaled(position.getTotalGrossAmount()));
+            Assertions.assertEquals(scaled(position.getSingleNetAmount().multiply(quantity)), scaled(position.getTotalNetAmount()));
+            Assertions.assertEquals(scaled(position.getSingleGrossAmount().subtract(position.getSingleNetAmount())), scaled(position.getSingleTaxAmount()));
+            Assertions.assertEquals(scaled(position.getSingleTaxAmount().multiply(quantity)), scaled(position.getTotalTaxAmount()));
+            Assertions.assertEquals(scaled(position.getTaxRatePercent()), scaled(taxRateDTO.getRate()));
+            Assertions.assertEquals(position.getTaxRateId(), taxRateDTO.getId());
+
+            totalNetAmount = totalNetAmount.add(position.getTotalNetAmount());
+            totalGrossAmount = totalGrossAmount.add(position.getTotalGrossAmount());
+            totalTaxAmount = totalTaxAmount.add(position.getTotalTaxAmount());
+        }
+
+        Assertions.assertEquals(scaled(totalNetAmount), scaled(receiptDTO.getNetAmount()));
+        Assertions.assertEquals(scaled(totalGrossAmount), scaled(receiptDTO.getGrossAmount()));
+        Assertions.assertEquals(scaled(totalTaxAmount), scaled(receiptDTO.getTaxAmount()));
+    }
+
+    private BigDecimal scaled(BigDecimal bigDecimal) {
+        return bigDecimal.setScale(2, RoundingMode.HALF_UP);
     }
 
     private TemplateDTO createTestTemplate() throws Exception {

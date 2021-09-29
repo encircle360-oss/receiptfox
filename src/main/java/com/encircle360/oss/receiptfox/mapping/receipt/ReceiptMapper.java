@@ -96,9 +96,11 @@ public interface ReceiptMapper {
                 position.setSingleNetAmount(singleNetAmount);
             }
 
-            position.setSingleTaxAmount(position.getSingleGrossAmount().subtract(position.getSingleNetAmount()));
-            position.setTotalNetAmount(singleNetAmount.multiply(BigDecimal.valueOf(position.getQuantity())));
-            position.setTotalGrossAmount(position.getTotalNetAmount().multiply(taxMultiplier));
+            BigDecimal quantity = BigDecimal.valueOf(position.getQuantity());
+
+            position.setSingleTaxAmount(singleGrossAmount.subtract(singleNetAmount));
+            position.setTotalNetAmount(singleNetAmount.multiply(quantity));
+            position.setTotalGrossAmount(singleGrossAmount.multiply(quantity));
             position.setTotalTaxAmount(position.getTotalGrossAmount().subtract(position.getTotalNetAmount()));
         }
 
