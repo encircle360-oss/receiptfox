@@ -33,6 +33,9 @@ import com.encircle360.oss.receiptfox.service.OrganizationUnitService;
 import com.encircle360.oss.receiptfox.service.PageContainerFactory;
 import com.encircle360.oss.receiptfox.service.TemplateMappingService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 
 @Validated
@@ -49,6 +52,17 @@ public class TemplateMappingController {
 
     private final PageContainerFactory pageContainerFactory;
 
+    @Operation(
+        operationId = "filterTemplateMappings",
+        description = "Filters all template mappings by the given parameters.",
+        parameters = {
+            @Parameter(name = "size", description = "The size of the page."),
+            @Parameter(name = "page", description = "The number of the page."),
+            @Parameter(name = "sort", description = "The sorting of the page."),
+            @Parameter(name = "organizationUnitId", description = "The id of the organization unit, you want to filter."),
+            @Parameter(name = "receiptType", description = "The type of the receipts this template mappings should be for."),
+        }
+    )
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PageContainer<TemplateMappingDTO>> filter(@RequestParam(required = false) final Integer size,
                                                                     @RequestParam(required = false) final Integer page,
@@ -64,6 +78,14 @@ public class TemplateMappingController {
         return ResponseEntity.status(HttpStatus.OK).body(pageContainer);
     }
 
+    @Operation(
+        operationId = "getTemplateMapping",
+        description = "Gets a template mapping by its id from database.",
+        responses = {
+            @ApiResponse(responseCode = "404", description = "The template mapping was not found."),
+            @ApiResponse(responseCode = "200", description = "The template mapping was found.")
+        }
+    )
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TemplateMappingDTO> get(@PathVariable final Long id) {
         TemplateMapping templateMapping = templateMappingService.get(id);
@@ -74,6 +96,15 @@ public class TemplateMappingController {
         return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
+    @Operation(
+        operationId = "createTemplateMapping",
+        description = "Creates a template mapping by the request body.",
+        responses = {
+            @ApiResponse(responseCode = "201", description = "Template mapping was created successfully."),
+            @ApiResponse(responseCode = "400", description = "The request body was not correct."),
+            @ApiResponse(responseCode = "424", description = "The linked organization unit was not found.")
+        }
+    )
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TemplateMappingDTO> create(@RequestBody @Valid final CreateUpdateTemplateMappingDTO createUpdateTemplateMappingDTO) {
         OrganizationUnit organizationUnit = organizationUnitService.get(createUpdateTemplateMappingDTO.getOrganizationUnitId());
@@ -88,6 +119,16 @@ public class TemplateMappingController {
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
+    @Operation(
+        operationId = "updateTemplateMapping",
+        description = "Creates a template mapping by the request body.",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Template mapping was updated successfully."),
+            @ApiResponse(responseCode = "400", description = "The request body was not correct."),
+            @ApiResponse(responseCode = "404", description = "The template mapping was not found."),
+            @ApiResponse(responseCode = "424", description = "The linked organization unit was not found.")
+        }
+    )
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TemplateMappingDTO> update(@RequestBody @Valid final CreateUpdateTemplateMappingDTO createUpdateTemplateMappingDTO,
                                                      @PathVariable final Long id) {
@@ -108,6 +149,14 @@ public class TemplateMappingController {
         return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
+    @Operation(
+        operationId = "deleteTemplateMapping",
+        description = "Deletes a template mapping by its id.",
+        responses = {
+            @ApiResponse(responseCode = "204", description = "The template mapping was deleted."),
+            @ApiResponse(responseCode = "404", description = "The template mapping was not found.")
+        }
+    )
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> delete(@PathVariable final Long id) {
         TemplateMapping templateMapping = templateMappingService.get(id);
