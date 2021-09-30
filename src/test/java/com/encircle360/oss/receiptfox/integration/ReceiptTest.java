@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -201,7 +202,59 @@ public class ReceiptTest extends AbstractTest {
     }
 
     @Test
-    public void test_processing() throws Exception {
+    public void test_processing_and_download() throws Exception {
+        TemplateDTO templateDTO = createTestTemplate();
+        OrganizationUnitDTO organizationUnitDTO = createTestOrganizationUnit();
+        TaxRateDTO taxRateDTO = createTestTaxRate();
+
+        AddressDTO emptyAddress = AddressDTO.builder().build();
+
+        CreateUpdateReceiptPositionDTO createUpdateReceiptPositionDTO = CreateUpdateReceiptPositionDTO
+            .builder()
+            .title("test")
+            .taxRateId(taxRateDTO.getId())
+            .quantity(2)
+            .unit(UnitDTO.PIECES)
+            .singleGrossAmount(BigDecimal.valueOf(119))
+            .build();
+
+        CreateUpdateReceiptDTO createUpdateReceiptDTO = CreateUpdateReceiptDTO
+            .builder()
+            .receiptType(ReceiptTypeDTO.INVOICE)
+            .receiptDate(LocalDate.now())
+            .organizationUnitId(organizationUnitDTO.getId())
+            .templateId(templateDTO.getId())
+            .receiverAddress(emptyAddress)
+            .senderAddress(emptyAddress)
+            .receiptNumber(UUID.randomUUID().toString())
+            .deliveryDate(LocalDate.now())
+            .positions(List.of(createUpdateReceiptPositionDTO))
+            .build();
+
+        MvcResult createdResult = post(URL, createUpdateReceiptDTO, status().isCreated());
+        ReceiptDTO receiptDTO = mapResultToObject(createdResult, ReceiptDTO.class);
+
+        emptyPut("/process-receipts/" + receiptDTO.getId() + "/" + ReceiptEventDTO.SET_OPEN, status().isNoContent());
+
+        MvcResult receiptWithDocumentResult = get(URL + "/" + receiptDTO.getId(), status().isOk());
+        ReceiptDTO receiptWithDocumentDto = mapResultToObject(receiptWithDocumentResult, ReceiptDTO.class);
+
+        Assertions.assertNotNull(receiptWithDocumentDto.getReceiptFileId());
+
+        MvcResult receiptFileResult = get("/receipt-files/" + receiptWithDocumentDto.getReceiptFileId() + "/download", status().isOk());
+        byte[] receiptFileBytes = receiptFileResult.getResponse().getContentAsByteArray();
+
+        Assertions.assertEquals(receiptFileResult.getResponse().getContentType(), MediaType.APPLICATION_PDF_VALUE);
+        Assertions.assertNotNull(receiptFileBytes);
+        Assertions.assertTrue(receiptFileBytes.length > 0);
+
+        emptyPut("/process-receipts/" + receiptDTO.getId() + "/" + ReceiptEventDTO.SET_OPEN, status().isPreconditionFailed());
+        emptyPut("/process-receipts/" + receiptDTO.getId() + "/" + ReceiptEventDTO.SET_CANCELED, status().isNoContent());
+        emptyPut("/process-receipts/" + receiptDTO.getId() + "/" + ReceiptEventDTO.SET_PAID, status().isPreconditionFailed());
+    }
+
+    @Test
+    public void test_processing_and_ocr() throws Exception {
         TemplateDTO templateDTO = createTestTemplate();
         OrganizationUnitDTO organizationUnitDTO = createTestOrganizationUnit();
         TaxRateDTO taxRateDTO = createTestTaxRate();

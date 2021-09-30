@@ -19,11 +19,20 @@ public interface TemplateMappingMapper {
 
     List<TemplateMappingDTO> toDtos(List<TemplateMapping> content);
 
+    @Mapping(target = "organizationUnitId", source = "organizationUnit.id")
     TemplateMappingDTO toDto(TemplateMapping templateMapping);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "created", ignore = true)
+    @Mapping(target = "updated", ignore = true)
+    @Mapping(target = "version", ignore = true)
     @Mapping(target = "organizationUnit", source = "organizationUnit")
     TemplateMapping createFromDto(CreateUpdateTemplateMappingDTO createUpdateTemplateMappingDTO, OrganizationUnit organizationUnit);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "created", ignore = true)
+    @Mapping(target = "updated", ignore = true)
+    @Mapping(target = "version", ignore = true)
     @Mapping(target = "organizationUnit", source = "organizationUnit")
     void updateFromDto(CreateUpdateTemplateMappingDTO createUpdateTemplateMappingDTO, OrganizationUnit organizationUnit, @MappingTarget TemplateMapping templateMapping);
 }

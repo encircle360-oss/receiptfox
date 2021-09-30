@@ -1,7 +1,10 @@
 package com.encircle360.oss.receiptfox.controller.receipt;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -19,6 +22,7 @@ import com.encircle360.oss.receiptfox.dto.receipt.ReceiptFileDTO;
 import com.encircle360.oss.receiptfox.mapping.receipt.ReceiptFileMapper;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptFile;
 import com.encircle360.oss.receiptfox.service.PageContainerFactory;
+import com.encircle360.oss.receiptfox.service.SimpleStorageService;
 import com.encircle360.oss.receiptfox.service.receipt.ReceiptFileService;
 
 import lombok.RequiredArgsConstructor;
@@ -30,7 +34,7 @@ import lombok.RequiredArgsConstructor;
 public class ReceiptFileController {
 
     private final ReceiptFileService receiptFileService;
-
+    private final SimpleStorageService simpleStorageService;
     private final ReceiptFileMapper receiptFileMapper = ReceiptFileMapper.INSTANCE;
 
     private final PageContainerFactory pageContainerFactory;
@@ -60,13 +64,18 @@ public class ReceiptFileController {
     }
 
     @GetMapping(value = "/{id}/download")
-    public ResponseEntity<byte[]> download(@PathVariable final Long id) {
+    public ResponseEntity<Resource> download(@PathVariable final Long id) throws IOException {
         ReceiptFile receiptFile = receiptFileService.get(id);
         if (receiptFile == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        // todo implement
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        byte[] data = simpleStorageService.get(receiptFile.getS3Bucket(), receiptFile.getS3Path());
+        ByteArrayResource resource = new ByteArrayResource(data);
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .contentLength(data.length)
+            .contentType(MediaType.APPLICATION_PDF)
+            .body(resource);
     }
 }

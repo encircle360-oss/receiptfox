@@ -19,9 +19,11 @@ import com.encircle360.oss.receiptfox.client.docsrabbit.dto.render.RenderResultD
 import com.encircle360.oss.receiptfox.client.docsrabbit.dto.template.TemplateDTO;
 import com.encircle360.oss.receiptfox.event.CreateReceiptDocumentEvent;
 import com.encircle360.oss.receiptfox.event.CreateReceiptOcrEvent;
+import com.encircle360.oss.receiptfox.model.TemplateMapping;
 import com.encircle360.oss.receiptfox.model.receipt.Receipt;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptFile;
 import com.encircle360.oss.receiptfox.service.SimpleStorageService;
+import com.encircle360.oss.receiptfox.service.TemplateMappingService;
 import com.encircle360.oss.receiptfox.service.receipt.ReceiptFileService;
 import com.encircle360.oss.receiptfox.service.receipt.ReceiptService;
 
@@ -32,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 public class CreateReceiptDocumentListener {
 
     // services
+    private final TemplateMappingService templateMappingService;
     private final SimpleStorageService simpleStorageService;
     private final ApplicationEventPublisher eventPublisher;
     private final ReceiptFileService receiptFileService;
@@ -49,6 +52,15 @@ public class CreateReceiptDocumentListener {
         }
 
         String templateId = receipt.getTemplateId();
+        if (templateId == null) {
+            TemplateMapping templateMapping = templateMappingService
+                .getDefaultForOrganizationUnitAndType(receipt.getOrganizationUnit(), receipt.getReceiptType());
+
+            if (templateMapping != null) {
+                templateId = templateMapping.getTemplateId();
+            }
+        }
+
         if (templateId == null) {
             templateId = receipt.getOrganizationUnit().getDefaultTemplateId();
         }

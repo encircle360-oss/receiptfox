@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.encircle360.oss.receiptfox.model.OrganizationUnit;
 import com.encircle360.oss.receiptfox.model.TemplateMapping;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptType;
 import com.encircle360.oss.receiptfox.repository.TemplateMappingRepository;
@@ -41,5 +42,9 @@ public class TemplateMappingService {
 
     public void delete(TemplateMapping templateMapping) {
         templateMappingRepository.delete(templateMapping);
+    }
+
+    public TemplateMapping getDefaultForOrganizationUnitAndType(OrganizationUnit organizationUnit, ReceiptType receiptType) {
+        return templateMappingRepository.findFirstByStandartAndOrganizationUnitAndType(true, organizationUnit, receiptType);
     }
 }
