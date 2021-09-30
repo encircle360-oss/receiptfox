@@ -1,4 +1,4 @@
-package com.encircle360.oss.receiptfox.controller;
+package com.encircle360.oss.receiptfox.controller.receipt;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

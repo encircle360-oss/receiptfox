@@ -1,4 +1,4 @@
-package com.encircle360.oss.receiptfox.controller;
+package com.encircle360.oss.receiptfox.controller.receipt;
 
 import java.util.List;
 import java.util.stream.Collectors;
