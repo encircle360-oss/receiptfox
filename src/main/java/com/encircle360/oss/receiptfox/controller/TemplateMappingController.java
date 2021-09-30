@@ -117,6 +117,6 @@ public class TemplateMappingController {
 
         templateMappingService.delete(templateMapping);
 
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
