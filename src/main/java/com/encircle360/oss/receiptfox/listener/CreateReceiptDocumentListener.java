@@ -5,6 +5,7 @@ import static com.encircle360.oss.receiptfox.service.SimpleStorageService.PDF_EX
 import java.io.IOException;
 import java.util.Map;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import com.encircle360.oss.receiptfox.client.docsrabbit.dto.render.RenderRequest
 import com.encircle360.oss.receiptfox.client.docsrabbit.dto.render.RenderResultDTO;
 import com.encircle360.oss.receiptfox.client.docsrabbit.dto.template.TemplateDTO;
 import com.encircle360.oss.receiptfox.event.CreateReceiptDocumentEvent;
+import com.encircle360.oss.receiptfox.event.CreateReceiptOcrEvent;
 import com.encircle360.oss.receiptfox.model.receipt.Receipt;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptFile;
 import com.encircle360.oss.receiptfox.service.SimpleStorageService;
@@ -31,6 +33,7 @@ public class CreateReceiptDocumentListener {
 
     // services
     private final SimpleStorageService simpleStorageService;
+    private final ApplicationEventPublisher eventPublisher;
     private final ReceiptFileService receiptFileService;
     private final ReceiptService receiptService;
 
@@ -105,6 +108,13 @@ public class CreateReceiptDocumentListener {
 
         receipt.setReceiptFile(receiptFile);
         receiptService.save(receipt);
+
+        CreateReceiptOcrEvent createReceiptOcrEvent = CreateReceiptOcrEvent
+            .builder()
+            .source(this)
+            .receiptId(receipt.getId())
+            .build();
+        eventPublisher.publishEvent(createReceiptOcrEvent);
     }
 
 }

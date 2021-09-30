@@ -27,6 +27,7 @@ import com.encircle360.oss.receiptfox.dto.organizationunit.api.CreateUpdateOrgan
 import com.encircle360.oss.receiptfox.dto.pagination.PageContainer;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptEventDTO;
+import com.encircle360.oss.receiptfox.dto.receipt.ReceiptFileDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptPositionDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptTypeDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.UnitDTO;
@@ -233,6 +234,25 @@ public class ReceiptTest extends AbstractTest {
         ReceiptDTO receiptDTO = mapResultToObject(createdResult, ReceiptDTO.class);
 
         emptyPut("/process-receipts/" + receiptDTO.getId() + "/" + ReceiptEventDTO.SET_OPEN, status().isNoContent());
+
+        MvcResult receiptWithDocumentResult = get(URL + "/" + receiptDTO.getId(), status().isOk());
+        ReceiptDTO receiptWithDocumentDto = mapResultToObject(receiptWithDocumentResult, ReceiptDTO.class);
+
+        Assertions.assertNotNull(receiptWithDocumentDto.getReceiptFileId());
+
+        MvcResult receiptFileResult = get("/receipt-files/" + receiptWithDocumentDto.getReceiptFileId(), status().isOk());
+        ReceiptFileDTO receiptFileDTO = mapResultToObject(receiptFileResult, ReceiptFileDTO.class);
+
+        Assertions.assertNull(receiptFileDTO.getOcr());
+        Assertions.assertNotNull(receiptFileDTO.getName());
+        Assertions.assertNotNull(receiptFileDTO.getId());
+
+        Thread.sleep(2000);
+        receiptFileResult = get("/receipt-files/" + receiptWithDocumentDto.getReceiptFileId(), status().isOk());
+        receiptFileDTO = mapResultToObject(receiptFileResult, ReceiptFileDTO.class);
+
+        Assertions.assertNotNull(receiptFileDTO.getOcr());
+
         emptyPut("/process-receipts/" + receiptDTO.getId() + "/" + ReceiptEventDTO.SET_OPEN, status().isPreconditionFailed());
         emptyPut("/process-receipts/" + receiptDTO.getId() + "/" + ReceiptEventDTO.SET_CANCELED, status().isNoContent());
         emptyPut("/process-receipts/" + receiptDTO.getId() + "/" + ReceiptEventDTO.SET_PAID, status().isPreconditionFailed());

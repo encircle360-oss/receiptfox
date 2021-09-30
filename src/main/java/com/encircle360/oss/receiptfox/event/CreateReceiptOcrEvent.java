@@ -8,12 +8,12 @@ import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
-public class CreateReceiptDocumentEvent extends ApplicationEvent {
+public class CreateReceiptOcrEvent extends ApplicationEvent {
 
     private final Long receiptId;
 
     @Builder
-    public CreateReceiptDocumentEvent(final Long receiptId, final Object source) {
+    public CreateReceiptOcrEvent(final Long receiptId, final Object source) {
         super(source);
         this.receiptId = receiptId;
     }
