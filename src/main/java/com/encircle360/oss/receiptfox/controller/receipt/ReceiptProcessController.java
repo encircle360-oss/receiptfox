@@ -17,6 +17,8 @@ import com.encircle360.oss.receiptfox.model.receipt.ReceiptStatus;
 import com.encircle360.oss.receiptfox.service.receipt.ReceiptService;
 import com.encircle360.oss.receiptfox.statemachine.receipt.ReceiptStateMachineService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -30,6 +32,15 @@ public class ReceiptProcessController {
 
     private final ReceiptEventMapper receiptEventMapper = ReceiptEventMapper.INSTANCE;
 
+    @Operation(
+        operationId = "processReceipt",
+        description = "Processes a receipt by the given event",
+        responses = {
+            @ApiResponse(responseCode = "204", description = "Processing was successful."),
+            @ApiResponse(responseCode = "404", description = "The receipt was not found."),
+            @ApiResponse(responseCode = "412", description = "Processing failed.")
+        }
+    )
     @PutMapping(value = "/{id}/{event}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> process(@PathVariable final Long id, @PathVariable(name = "event") final ReceiptEventDTO receiptEventDTO) {
         Receipt receipt = receiptService.get(id);
