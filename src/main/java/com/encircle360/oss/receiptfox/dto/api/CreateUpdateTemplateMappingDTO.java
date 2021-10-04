@@ -3,13 +3,11 @@ package com.encircle360.oss.receiptfox.dto.api;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import com.encircle360.oss.receiptfox.dto.contact.AbstractEntityDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptTypeDTO;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
@@ -17,9 +15,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-@Schema(name = "TemplateMapping", description = "A template mapped to an organization unit with type.")
-public class CreateUpdateTemplateMappingDTO extends AbstractEntityDTO {
+@Schema(name = "CreateUpdateTemplateMapping", description = "A template mapped to an organization unit with type.")
+public class CreateUpdateTemplateMappingDTO {
 
     @NotBlank
     @Schema(description = "The docsrabbit id of the template.")
