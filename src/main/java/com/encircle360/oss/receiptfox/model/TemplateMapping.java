@@ -28,5 +28,5 @@ public class TemplateMapping extends AbstractEntity {
 
     private String description;
 
-    private boolean standart;
+    private boolean isDefault;
 }

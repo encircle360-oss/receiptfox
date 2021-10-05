@@ -31,5 +31,5 @@ public class TemplateMappingDTO extends AbstractEntityDTO {
     private String description;
 
     @Schema(description = "Marks if this template should be used as default.")
-    private boolean standart;
+    private boolean isDefault;
 }

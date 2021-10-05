@@ -60,7 +60,7 @@ public class TemplateMappingTest extends AbstractTest {
 
         createUpdateTemplateMappingDTO.setOrganizationUnitId(organizationUnitDTO.getId());
         createUpdateTemplateMappingDTO.setType(ReceiptTypeDTO.INTERIM_BILL);
-        createUpdateTemplateMappingDTO.setStandart(true);
+        createUpdateTemplateMappingDTO.setDefault(true);
 
         MvcResult putResult = put(URL + "/" + templateMappingDTO.getId(), createUpdateTemplateMappingDTO, status().isOk());
         TemplateMappingDTO putTemplateMapping = mapResultToObject(putResult, TemplateMappingDTO.class);
@@ -68,7 +68,7 @@ public class TemplateMappingTest extends AbstractTest {
         Assertions.assertEquals(templateMappingDTO.getId(), putTemplateMapping.getId());
         Assertions.assertEquals(templateMappingDTO.getTemplateId(), putTemplateMapping.getTemplateId());
         Assertions.assertNotEquals(templateMappingDTO.getType(), putTemplateMapping.getType());
-        Assertions.assertNotEquals(templateMappingDTO.isStandart(), putTemplateMapping.isStandart());
+        Assertions.assertNotEquals(templateMappingDTO.isDefault(), putTemplateMapping.isDefault());
         Assertions.assertNotEquals(templateMappingDTO.getUpdated(), putTemplateMapping.getUpdated());
         Assertions.assertEquals(templateMappingDTO.getCreated(), putTemplateMapping.getCreated());
 
