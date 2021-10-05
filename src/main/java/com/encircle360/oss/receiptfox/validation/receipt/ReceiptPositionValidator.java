@@ -10,8 +10,8 @@ import com.encircle360.oss.receiptfox.dto.receipt.api.CreateUpdateReceiptPositio
 public class ReceiptPositionValidator implements ConstraintValidator<ValidReceiptPosition, CreateUpdateReceiptPositionDTO> {
     @Override
     public boolean isValid(CreateUpdateReceiptPositionDTO value, ConstraintValidatorContext context) {
-        BigDecimal singleGrossAmount = value.getSingleGrossAmount();
-        BigDecimal singleNetAmount = value.getSingleNetAmount();
+        BigDecimal singleGrossAmount = value.getUnitGrossAmount();
+        BigDecimal singleNetAmount = value.getUnitNetAmount();
 
         if (singleGrossAmount == null && singleNetAmount == null) {
             return false;

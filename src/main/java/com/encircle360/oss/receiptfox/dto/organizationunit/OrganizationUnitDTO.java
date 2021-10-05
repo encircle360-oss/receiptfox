@@ -25,7 +25,7 @@ public class OrganizationUnitDTO extends AbstractEntityDTO {
     private AddressDTO address;
 
     @Schema(description = "Image of the organization unit.")
-    private String organizationImage;
+    private String image;
 
     @Schema(description = "Number pattern for receipts of the organization unit.")
     private String receiptNumberPattern;

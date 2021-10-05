@@ -78,8 +78,8 @@ public interface ReceiptMapper {
         }
 
         for (ReceiptPosition position : positions) {
-            BigDecimal singleNetAmount = position.getSingleNetAmount();
-            BigDecimal singleGrossAmount = position.getSingleGrossAmount();
+            BigDecimal singleNetAmount = position.getUnitNetAmount();
+            BigDecimal singleGrossAmount = position.getUnitGrossAmount();
             BigDecimal taxMultiplier = BigDecimal.ONE.add(position.getTaxRatePercent());
 
             // Both values are null should not be possible
@@ -90,15 +90,15 @@ public interface ReceiptMapper {
 
             if (singleNetAmount != null) {
                 singleGrossAmount = singleNetAmount.multiply(taxMultiplier);
-                position.setSingleGrossAmount(singleGrossAmount);
+                position.setUnitGrossAmount(singleGrossAmount);
             } else {
                 singleNetAmount = singleGrossAmount.divide(taxMultiplier, 20, RoundingMode.HALF_UP);
-                position.setSingleNetAmount(singleNetAmount);
+                position.setUnitNetAmount(singleNetAmount);
             }
 
             BigDecimal quantity = BigDecimal.valueOf(position.getQuantity());
 
-            position.setSingleTaxAmount(singleGrossAmount.subtract(singleNetAmount));
+            position.setUnitTaxAmount(singleGrossAmount.subtract(singleNetAmount));
             position.setTotalNetAmount(singleNetAmount.multiply(quantity));
             position.setTotalGrossAmount(singleGrossAmount.multiply(quantity));
             position.setTotalTaxAmount(position.getTotalGrossAmount().subtract(position.getTotalNetAmount()));

@@ -41,11 +41,11 @@ public class CreateUpdateReceiptDTO {
 
     @NotNull
     @Schema(description = "The address of the sender.")
-    private AddressDTO senderAddress;
+    private @Valid AddressDTO senderAddress;
 
     @NotNull
     @Schema(description = "The address of the receiver.")
-    private AddressDTO receiverAddress;
+    private @Valid AddressDTO receiverAddress;
 
     @Schema(description = "Id of the contact, this receipt belongs to.")
     private Long contactId;

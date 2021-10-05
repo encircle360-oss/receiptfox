@@ -13,9 +13,6 @@ import lombok.experimental.SuperBuilder;
 @Schema(name = "RenderResult", description = "Holds the rendering results in base64 format and has additional information")
 public class RenderResultDTO {
 
-    @Schema(description = "Database ID of the template used", example = "")
-    private String templateId;
-
     @Schema(description = "MimeType of content", example = "application/pdf")
     private String mimeType;
 

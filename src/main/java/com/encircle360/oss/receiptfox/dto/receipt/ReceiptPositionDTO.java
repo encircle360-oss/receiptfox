@@ -31,16 +31,16 @@ public class ReceiptPositionDTO {
     private UnitDTO unit;
 
     @Schema(description = "Single price for the product / service without tax.", example = "10.00")
-    private BigDecimal singleNetAmount;
+    private BigDecimal unitNetAmount;
 
     @Schema(description = "Single price for the product / service within tax.", example = "11.90")
-    private BigDecimal singleGrossAmount;
+    private BigDecimal unitGrossAmount;
 
     @Schema(description = "Total price for the product / service without tax (quantity * singleNetAmount).", example = "30.00")
     private BigDecimal totalNetAmount;
 
     @Schema(description = "Single tax amount for the product / service.", example = "1.90")
-    private BigDecimal singleTaxAmount;
+    private BigDecimal unitTaxAmount;
 
     @Schema(description = "Total tax amount for the product / service (quantity * singleTaxAmount).", example = "5.70")
     private BigDecimal totalTaxAmount;

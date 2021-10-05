@@ -19,7 +19,7 @@ public interface ReceiptPositionMapper {
     @Mapping(source = "taxRate", target = "taxRate")
     @Mapping(target = "totalNetAmount", ignore = true)
     @Mapping(target = "totalTaxAmount", ignore = true)
-    @Mapping(target = "singleTaxAmount", ignore = true)
+    @Mapping(target = "unitTaxAmount", ignore = true)
     @Mapping(target = "totalGrossAmount", ignore = true)
     @Mapping(source = "taxRate.rate", target = "taxRatePercent")
     ReceiptPosition fromDto(CreateUpdateReceiptPositionDTO receiptPositionDTO, TaxRate taxRate);

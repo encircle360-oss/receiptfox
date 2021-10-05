@@ -1,5 +1,6 @@
 package com.encircle360.oss.receiptfox.dto.organizationunit.api;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -24,10 +25,10 @@ public class CreateUpdateOrganizationUnitDTO {
 
     @NotNull
     @Schema(description = "Address of the organization unit.")
-    private AddressDTO address;
+    private @Valid AddressDTO address;
 
     @Schema(description = "Image of the organization unit.")
-    private String organizationImage;
+    private String image;
 
     @Schema(description = "Number pattern for receipts of the organization unit.")
     private String receiptNumberPattern;

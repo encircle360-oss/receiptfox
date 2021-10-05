@@ -60,7 +60,7 @@ public class ReceiptTest extends AbstractTest {
             .taxRateId(taxRateDTO.getId())
             .quantity(2)
             .unit(UnitDTO.PIECES)
-            .singleGrossAmount(BigDecimal.valueOf(119))
+            .unitGrossAmount(BigDecimal.valueOf(119))
             .build();
 
         CreateUpdateReceiptPositionDTO createUpdateReceiptPositionDTO2 = CreateUpdateReceiptPositionDTO
@@ -69,7 +69,7 @@ public class ReceiptTest extends AbstractTest {
             .taxRateId(taxRateDTO.getId())
             .quantity(5)
             .unit(UnitDTO.PIECES)
-            .singleNetAmount(BigDecimal.valueOf(100))
+            .unitNetAmount(BigDecimal.valueOf(100))
             .build();
 
         CreateUpdateReceiptPositionDTO createUpdateReceiptPositionDTO3 = CreateUpdateReceiptPositionDTO
@@ -78,7 +78,7 @@ public class ReceiptTest extends AbstractTest {
             .taxRateId(taxRateDTO.getId())
             .quantity(5)
             .unit(UnitDTO.PIECES)
-            .singleNetAmount(BigDecimal.valueOf(145.23))
+            .unitNetAmount(BigDecimal.valueOf(145.23))
             .build();
 
         // always use a prime number after decimal point to test calculation
@@ -88,7 +88,7 @@ public class ReceiptTest extends AbstractTest {
             .taxRateId(taxRateDTO.getId())
             .quantity(5)
             .unit(UnitDTO.PIECES)
-            .singleGrossAmount(BigDecimal.valueOf(145.17))
+            .unitGrossAmount(BigDecimal.valueOf(145.17))
             .build();
 
         List<CreateUpdateReceiptPositionDTO> positions = List.of(
@@ -131,13 +131,13 @@ public class ReceiptTest extends AbstractTest {
 
         for (ReceiptPositionDTO position : receiptDTO.getPositions()) {
             BigDecimal quantity = BigDecimal.valueOf(position.getQuantity());
-            BigDecimal calculatedGross = position.getSingleNetAmount().multiply(position.getTaxRatePercent().add(BigDecimal.ONE));
+            BigDecimal calculatedGross = position.getUnitNetAmount().multiply(position.getTaxRatePercent().add(BigDecimal.ONE));
 
-            Assertions.assertEquals(scaled(position.getSingleGrossAmount()), scaled(calculatedGross));
-            Assertions.assertEquals(scaled(position.getSingleGrossAmount().multiply(quantity)), scaled(position.getTotalGrossAmount()));
-            Assertions.assertEquals(scaled(position.getSingleNetAmount().multiply(quantity)), scaled(position.getTotalNetAmount()));
-            Assertions.assertEquals(scaled(position.getSingleGrossAmount().subtract(position.getSingleNetAmount())), scaled(position.getSingleTaxAmount()));
-            Assertions.assertEquals(scaled(position.getSingleTaxAmount().multiply(quantity)), scaled(position.getTotalTaxAmount()));
+            Assertions.assertEquals(scaled(position.getUnitGrossAmount()), scaled(calculatedGross));
+            Assertions.assertEquals(scaled(position.getUnitGrossAmount().multiply(quantity)), scaled(position.getTotalGrossAmount()));
+            Assertions.assertEquals(scaled(position.getUnitNetAmount().multiply(quantity)), scaled(position.getTotalNetAmount()));
+            Assertions.assertEquals(scaled(position.getUnitGrossAmount().subtract(position.getUnitNetAmount())), scaled(position.getUnitTaxAmount()));
+            Assertions.assertEquals(scaled(position.getUnitTaxAmount().multiply(quantity)), scaled(position.getTotalTaxAmount()));
             Assertions.assertEquals(scaled(position.getTaxRatePercent()), scaled(taxRateDTO.getRate()));
             Assertions.assertEquals(position.getTaxRateId(), taxRateDTO.getId());
 
@@ -165,10 +165,10 @@ public class ReceiptTest extends AbstractTest {
 
         for (ReceiptPositionDTO position : receiptDTO.getPositions()) {
             BigDecimal quantity = BigDecimal.valueOf(position.getQuantity());
-            Assertions.assertEquals(scaled(position.getSingleGrossAmount().multiply(quantity)), scaled(position.getTotalGrossAmount()));
-            Assertions.assertEquals(scaled(position.getSingleNetAmount().multiply(quantity)), scaled(position.getTotalNetAmount()));
-            Assertions.assertEquals(scaled(position.getSingleGrossAmount().subtract(position.getSingleNetAmount())), scaled(position.getSingleTaxAmount()));
-            Assertions.assertEquals(scaled(position.getSingleTaxAmount().multiply(quantity)), scaled(position.getTotalTaxAmount()));
+            Assertions.assertEquals(scaled(position.getUnitGrossAmount().multiply(quantity)), scaled(position.getTotalGrossAmount()));
+            Assertions.assertEquals(scaled(position.getUnitNetAmount().multiply(quantity)), scaled(position.getTotalNetAmount()));
+            Assertions.assertEquals(scaled(position.getUnitGrossAmount().subtract(position.getUnitNetAmount())), scaled(position.getUnitTaxAmount()));
+            Assertions.assertEquals(scaled(position.getUnitTaxAmount().multiply(quantity)), scaled(position.getTotalTaxAmount()));
             Assertions.assertEquals(scaled(position.getTaxRatePercent()), scaled(taxRateDTO.getRate()));
             Assertions.assertEquals(position.getTaxRateId(), taxRateDTO.getId());
 
@@ -215,7 +215,7 @@ public class ReceiptTest extends AbstractTest {
             .taxRateId(taxRateDTO.getId())
             .quantity(2)
             .unit(UnitDTO.PIECES)
-            .singleGrossAmount(BigDecimal.valueOf(119))
+            .unitGrossAmount(BigDecimal.valueOf(119))
             .build();
 
         CreateUpdateReceiptDTO createUpdateReceiptDTO = CreateUpdateReceiptDTO
@@ -267,7 +267,7 @@ public class ReceiptTest extends AbstractTest {
             .taxRateId(taxRateDTO.getId())
             .quantity(2)
             .unit(UnitDTO.PIECES)
-            .singleGrossAmount(BigDecimal.valueOf(119))
+            .unitGrossAmount(BigDecimal.valueOf(119))
             .build();
 
         CreateUpdateReceiptDTO createUpdateReceiptDTO = CreateUpdateReceiptDTO

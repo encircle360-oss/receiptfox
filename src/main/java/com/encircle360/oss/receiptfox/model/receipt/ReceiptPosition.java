@@ -28,13 +28,13 @@ public class ReceiptPosition {
 
     private Unit unit;
 
-    private BigDecimal singleNetAmount;
+    private BigDecimal unitNetAmount;
 
-    private BigDecimal singleGrossAmount;
+    private BigDecimal unitGrossAmount;
 
     private BigDecimal totalNetAmount;
 
-    private BigDecimal singleTaxAmount;
+    private BigDecimal unitTaxAmount;
 
     private BigDecimal totalTaxAmount;
 

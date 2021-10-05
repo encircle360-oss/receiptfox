@@ -7,7 +7,6 @@ import javax.validation.constraints.NotNull;
 
 import com.encircle360.oss.receiptfox.dto.receipt.UnitDTO;
 import com.encircle360.oss.receiptfox.validation.receipt.ValidReceiptPosition;
-import com.fasterxml.jackson.databind.jsonschema.JsonSerializableSchema;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -43,9 +42,9 @@ public class CreateUpdateReceiptPositionDTO {
     private UnitDTO unit;
 
     @Schema(description = "Single price for the product / service without tax.", example = "10.00")
-    private BigDecimal singleNetAmount;
+    private BigDecimal unitNetAmount;
 
     @Schema(description = "Single price for the product / service within tax.", example = "11.90")
-    private BigDecimal singleGrossAmount;
+    private BigDecimal unitGrossAmount;
 
 }

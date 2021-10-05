@@ -28,7 +28,7 @@ public class OrganizationUnit extends AbstractEntity {
     private Address address;
 
     @Column(columnDefinition = "text")
-    private String organizationImage;
+    private String image;
 
     private String receiptNumberPattern;
 
