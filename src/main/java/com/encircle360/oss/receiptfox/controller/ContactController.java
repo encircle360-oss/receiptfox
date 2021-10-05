@@ -126,7 +126,8 @@ public class ContactController {
         responses = {
             @ApiResponse(responseCode = "200", description = "Contact was updated."),
             @ApiResponse(responseCode = "400", description = "The requestbody was not correct."),
-            @ApiResponse(responseCode = "404", description = "Contact was not found.")
+            @ApiResponse(responseCode = "404", description = "Contact was not found."),
+            @ApiResponse(responseCode = "424", description = "The organization unit was not found.")
         }
     )
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
