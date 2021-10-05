@@ -45,6 +45,6 @@ public class TemplateMappingService {
     }
 
     public TemplateMapping getDefaultForOrganizationUnitAndType(OrganizationUnit organizationUnit, ReceiptType receiptType) {
-        return templateMappingRepository.findFirstByStandartAndOrganizationUnitAndType(true, organizationUnit, receiptType);
+        return templateMappingRepository.findFirstByIsDefaultAndOrganizationUnitAndType(true, organizationUnit, receiptType);
     }
 }

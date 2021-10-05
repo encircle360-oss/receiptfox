@@ -19,5 +19,5 @@ public interface TemplateMappingRepository extends CrudRepository<TemplateMappin
 
     Page<TemplateMapping> findAllByTypeAndOrganizationUnitId(ReceiptType receiptType, Long organizationUnitId, Pageable pageable);
 
-    TemplateMapping findFirstByStandartAndOrganizationUnitAndType(boolean b, OrganizationUnit organizationUnit, ReceiptType receiptType);
+    TemplateMapping findFirstByIsDefaultAndOrganizationUnitAndType(boolean b, OrganizationUnit organizationUnit, ReceiptType receiptType);
 }
