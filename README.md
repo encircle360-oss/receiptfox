@@ -56,7 +56,7 @@ A sample post request body for ```/template-mappings``` looks like this:
 	"type": "INVOICE",
 	"organizationUnitId": 1,
 	"description": null,
-	"standart": true
+	"isDefault": true
 }
 ```
 
