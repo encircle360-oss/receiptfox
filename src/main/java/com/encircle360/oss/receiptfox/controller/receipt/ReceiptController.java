@@ -111,7 +111,7 @@ public class ReceiptController {
         responses = {
             @ApiResponse(responseCode = "201", description = "The receipt was created successfully."),
             @ApiResponse(responseCode = "400", description = "The request body was not correct."),
-            @ApiResponse(responseCode = "424", description = "The linked organization unit does not exists.")
+            @ApiResponse(responseCode = "424", description = "The linked organization unit, contact or receipt file does not exists.")
         }
     )
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -120,7 +120,9 @@ public class ReceiptController {
         ReceiptFile receiptFile = receiptFileService.get(createUpdateReceiptDTO.getReceiptFileId());
         Contact contact = contactService.get(createUpdateReceiptDTO.getContactId());
 
-        if (organizationUnit == null) {
+        if (organizationUnit == null
+            || (createUpdateReceiptDTO.getReceiptFileId() != null && receiptFile == null)
+            || (createUpdateReceiptDTO.getContactId() != null && contact == null)) {
             return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).build();
         }
 
@@ -145,7 +147,7 @@ public class ReceiptController {
             @ApiResponse(responseCode = "200", description = "The receipt was updated successfully."),
             @ApiResponse(responseCode = "400", description = "The request body was not correct."),
             @ApiResponse(responseCode = "412", description = "The receipt is not in draft status."),
-            @ApiResponse(responseCode = "424", description = "The linked organization unit does not exists."),
+            @ApiResponse(responseCode = "424", description = "The linked organization unit, contact or receipt file does not exists.")
         }
     )
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -165,7 +167,9 @@ public class ReceiptController {
 
         List<ReceiptPosition> receiptPositions = receiptPositions(createUpdateReceiptDTO);
 
-        if (receiptPositions.contains(null) || organizationUnit == null) {
+        if (receiptPositions.contains(null) || organizationUnit == null
+            || (createUpdateReceiptDTO.getReceiptFileId() != null && receiptFile == null)
+            || (createUpdateReceiptDTO.getContactId() != null && contact == null)) {
             return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).build();
         }
 
