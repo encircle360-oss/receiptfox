@@ -45,7 +45,8 @@ A sample post request body for creating an organization unit you can post to ```
 
 ## Template mappings
 
-To use the correct template everytime, you can use template mappings.
+To use the correct template everytime, you can use template mappings. If a mapping for a ```ReceiptType``` and the ```OrganizationUnit``` is set and no ```templateId``` is
+submitted while creating a ```Receipt```, the mapping is selected automatically while processing the receipt.
 
 A sample post request body for ```/template-mappings``` looks like this:
 

@@ -15,6 +15,6 @@ import lombok.experimental.SuperBuilder;
 @Schema(name = "InlineRenderRequest", description = "Request dto for rendering a template which is submitted inline")
 public class InlineRenderRequestDTO extends AbstractRenderRequestDTO {
 
-    @Schema(name = "template", description = "The contents of this template")
+    @Schema(description = "The contents of this template")
     private String template;
 }

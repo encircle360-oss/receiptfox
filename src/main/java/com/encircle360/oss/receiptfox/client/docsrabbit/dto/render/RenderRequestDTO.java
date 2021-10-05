@@ -18,6 +18,6 @@ import lombok.experimental.SuperBuilder;
 public class RenderRequestDTO extends AbstractRenderRequestDTO {
 
     @NotBlank
-    @Schema(name = "templateId", description = "Id of the template, that should be used for rendering")
+    @Schema(description = "Id of the template, that should be used for rendering")
     private String templateId;
 }

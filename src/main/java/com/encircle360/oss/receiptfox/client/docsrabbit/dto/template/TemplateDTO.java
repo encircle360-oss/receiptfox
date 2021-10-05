@@ -16,21 +16,21 @@ import lombok.experimental.SuperBuilder;
 @Schema(name = "Template")
 public class TemplateDTO {
 
-    @Schema(name = "id", description = "Id of the template in database")
+    @Schema(description = "Id of the template in database")
     private String id;
 
-    @Schema(name = "name", description = "Name of the template in database")
+    @Schema(description = "Name of the template in database")
     private String name;
 
-    @Schema(name = "content", description = "Content of the template in database (HTML, plain text, base64 encoded file content, etc.)")
+    @Schema(description = "Content of the template in database (HTML, plain text, base64 encoded file content, etc.)")
     private String content;
 
-    @Schema(name = "locale", description = "Locale of the template in database")
+    @Schema(description = "Locale of the template in database")
     private String locale;
 
-    @Schema(name = "tags", description = "List of tags which this template has.")
+    @Schema(description = "List of tags which this template has.")
     private List<String> tags;
 
-    @Schema(name = "lastUpdate", description = "Added lastupdate for caching of templates")
+    @Schema(description = "Added lastupdate for caching of templates")
     private LocalDateTime lastUpdate;
 }
