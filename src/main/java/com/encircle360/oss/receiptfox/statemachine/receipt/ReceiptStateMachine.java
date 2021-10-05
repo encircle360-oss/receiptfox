@@ -10,7 +10,7 @@ import org.springframework.statemachine.config.EnumStateMachineConfigurerAdapter
 import org.springframework.statemachine.config.builders.StateMachineStateConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineTransitionConfigurer;
 
-import com.encircle360.oss.receiptfox.event.CreateReceiptDocumentEvent;
+import com.encircle360.oss.receiptfox.event.ReceiptProcessedEvent;
 import com.encircle360.oss.receiptfox.model.receipt.Receipt;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptEvent;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptStatus;
@@ -69,7 +69,7 @@ public class ReceiptStateMachine extends EnumStateMachineConfigurerAdapter<Recei
             receipt = receiptService.save(receipt);
 
             if (status.equals(ReceiptStatus.OPEN) || status.equals(ReceiptStatus.CANCELED)) {
-                CreateReceiptDocumentEvent receiptDocumentEvent = CreateReceiptDocumentEvent
+                ReceiptProcessedEvent receiptDocumentEvent = ReceiptProcessedEvent
                     .builder()
                     .receiptId(receipt.getId())
                     .source(this)
