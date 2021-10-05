@@ -1,7 +1,6 @@
 package com.encircle360.oss.receiptfox.mapping.receipt;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 import org.mapstruct.AfterMapping;
@@ -76,35 +75,6 @@ public interface ReceiptMapper {
         if (positions == null || positions.isEmpty()) {
             return;
         }
-
-        for (ReceiptPosition position : positions) {
-            BigDecimal singleNetAmount = position.getUnitNetAmount();
-            BigDecimal singleGrossAmount = position.getUnitGrossAmount();
-            BigDecimal taxMultiplier = BigDecimal.ONE.add(position.getTaxRatePercent());
-
-            // Both values are null should not be possible
-            // only for avoiding null pointers
-            if (singleNetAmount == null && singleGrossAmount == null) {
-                continue;
-            }
-
-            if (singleNetAmount != null) {
-                singleGrossAmount = singleNetAmount.multiply(taxMultiplier);
-                position.setUnitGrossAmount(singleGrossAmount);
-            } else {
-                singleNetAmount = singleGrossAmount.divide(taxMultiplier, 20, RoundingMode.HALF_UP);
-                position.setUnitNetAmount(singleNetAmount);
-            }
-
-            BigDecimal quantity = BigDecimal.valueOf(position.getQuantity());
-
-            position.setUnitTaxAmount(singleGrossAmount.subtract(singleNetAmount));
-            position.setTotalNetAmount(singleNetAmount.multiply(quantity));
-            position.setTotalGrossAmount(singleGrossAmount.multiply(quantity));
-            position.setTotalTaxAmount(position.getTotalGrossAmount().subtract(position.getTotalNetAmount()));
-        }
-
-        receipt.setPositions(positions);
 
         BigDecimal totalGrossAmount = positions.stream()
             .map(ReceiptPosition::getTotalGrossAmount)
