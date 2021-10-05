@@ -138,6 +138,23 @@ The request body should look like the following, every field which is filled in 
 After creating a receipt you can process the receipt to another status (```DRAFT -> OPEN, OPEN -> PAID, OPEN -> CANCELED```). The default status after creating a receipt is always
 DRAFT. When the status is changed through processing you cannot edit the receipt anymore (the receipt file was created automatically, while processing).
 
+### Processing receipt
+
+To set a receipt as finished / final and create a not editable PDF document, simply start processing it. There are 3 events you can trigger ```SET_OPEN, SET_PAID, SET_CANCELED```
+
+If you want to trigger an event call with GET:
+
+```/process-receipts/YOUR_RECEIPT_ID/YOUR_EVENT```
+
+After calling one of these events, the receipt is not editable anymore and you can obtain a PDF document by downloading the ```ReceiptFile```, which is linked in your ```Receipt```
+object with the property ```receiptFileId```.
+
+### Downloading receipt file
+
+You can download a ```ReceiptFile``` by calling GET:
+
+```/receipt-files/RECEIPT_FILE_ID/download```
+
 ### Receipt templates
 
 For templating [docsrabbit](https://gitlab.com/encircle360-oss/docsrabbit/docsrabbit) is used. In your receipt creation you should set a docsrabbit template id, or you have defined
