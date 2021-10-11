@@ -8,6 +8,23 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+
+server:
+  port: 8080
+  error:
+    include-binding-errors: always
+  servlet:
+    encoding:
+      force: true
+
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
 s3:
   endpoint: "http://localhost:9000"
   sigv4: "us-west-1"
