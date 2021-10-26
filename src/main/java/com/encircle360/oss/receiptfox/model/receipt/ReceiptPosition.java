@@ -1,6 +1,7 @@
 package com.encircle360.oss.receiptfox.model.receipt;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 
 import javax.persistence.ManyToOne;
 
@@ -42,4 +43,5 @@ public class ReceiptPosition {
 
     private BigDecimal taxRatePercent;
 
+    private HashMap<String, Object> meta;
 }
