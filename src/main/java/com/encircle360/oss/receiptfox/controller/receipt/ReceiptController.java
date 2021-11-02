@@ -1,6 +1,5 @@
 package com.encircle360.oss.receiptfox.controller.receipt;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -117,17 +116,22 @@ public class ReceiptController {
         operationId = "previewReceipt",
         description = "Returns a receipt preview as download by its id.",
         responses = {
-            @ApiResponse(responseCode = "200", description = "ReceiptFile was found."),
-            @ApiResponse(responseCode = "404", description = "ReceiptFile was not found.")
+            @ApiResponse(responseCode = "200", description = "preview was created."),
+            @ApiResponse(responseCode = "404", description = "Receipt was not found."),
+            @ApiResponse(responseCode = "417", description = "The receipt is already final, preview is only available in draft."),
+            @ApiResponse(responseCode = "500", description = "Rendering was not successful, something went wrong in docsrabbit.")
         }
     )
     @GetMapping(value = "/{id}/preview")
-    public ResponseEntity<Resource> preview(@PathVariable final Long id) throws IOException {
+    public ResponseEntity<Resource> preview(@PathVariable final Long id) {
         Receipt receipt = receiptService.get(id);
         if (receipt == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
+        if (!receipt.getStatus().equals(ReceiptStatus.DRAFT)) {
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).build();
+        }
         RenderResultDTO result;
         try {
             result = receiptService.render(receipt);
