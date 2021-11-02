@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.context.event.EventListener;
@@ -19,20 +18,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.encircle360.oss.receiptfox.client.docsrabbit.OcrClient;
-import com.encircle360.oss.receiptfox.client.docsrabbit.RenderClient;
-import com.encircle360.oss.receiptfox.client.docsrabbit.TemplateClient;
 import com.encircle360.oss.receiptfox.client.docsrabbit.dto.OCRResultDTO;
-import com.encircle360.oss.receiptfox.client.docsrabbit.dto.render.RenderFormatDTO;
-import com.encircle360.oss.receiptfox.client.docsrabbit.dto.render.RenderRequestDTO;
 import com.encircle360.oss.receiptfox.client.docsrabbit.dto.render.RenderResultDTO;
 import com.encircle360.oss.receiptfox.event.ReceiptProcessedEvent;
-import com.encircle360.oss.receiptfox.model.TemplateMapping;
-import com.encircle360.oss.receiptfox.model.contact.Contact;
 import com.encircle360.oss.receiptfox.model.receipt.Receipt;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptFile;
-import com.encircle360.oss.receiptfox.service.ContactService;
 import com.encircle360.oss.receiptfox.service.SimpleStorageService;
-import com.encircle360.oss.receiptfox.service.TemplateMappingService;
 import com.encircle360.oss.receiptfox.service.receipt.ReceiptFileService;
 import com.encircle360.oss.receiptfox.service.receipt.ReceiptService;
 
@@ -45,15 +36,11 @@ import lombok.extern.slf4j.Slf4j;
 public class ReceiptProcessedListeners {
 
     // services
-    private final TemplateMappingService templateMappingService;
     private final SimpleStorageService simpleStorageService;
     private final ReceiptFileService receiptFileService;
-    private final ContactService contactService;
     private final ReceiptService receiptService;
 
     // clients
-    private final TemplateClient templateClient;
-    private final RenderClient renderClient;
     private final OcrClient ocrClient;
 
     @EventListener(ReceiptProcessedEvent.class)
@@ -63,28 +50,7 @@ public class ReceiptProcessedListeners {
             return;
         }
 
-        String templateId = getTemplateId(receipt);
-
-        Map<String, Object> model = new HashMap<>();
-        Contact contact = receipt.getContact();
-
-        model.put("receipt", receipt);
-        model.put("contact", contact);
-
-        RenderRequestDTO renderRequestDTO = RenderRequestDTO
-            .builder()
-            .templateId(templateId)
-            .format(RenderFormatDTO.PDF)
-            .model(model)
-            .build();
-
-        ResponseEntity<RenderResultDTO> resultResponseEntity = renderClient.render(renderRequestDTO);
-        RenderResultDTO result = resultResponseEntity.getBody();
-
-        if (!resultResponseEntity.getStatusCode().is2xxSuccessful() || result == null || result.getBase64() == null) {
-            throw new IllegalStateException("Rendering was not successful.");
-        }
-
+        RenderResultDTO result = receiptService.render(receipt);
         byte[] data = simpleStorageService.decode(result.getBase64());
         ReceiptFile receiptFile = receipt.getReceiptFile();
 
@@ -102,7 +68,6 @@ public class ReceiptProcessedListeners {
             throw new IOException("File was not saved");
         }
         receiptFileService.save(receiptFile);
-
     }
 
     @Async
@@ -137,23 +102,6 @@ public class ReceiptProcessedListeners {
 
         receiptFile.setOcr(resultDTO.getContent());
         receiptFileService.save(receiptFile);
-    }
-
-    private String getTemplateId(Receipt receipt) {
-        String templateId = receipt.getTemplateId();
-        if (templateId == null) {
-            TemplateMapping templateMapping = templateMappingService
-                .getDefaultForOrganizationUnitAndType(receipt.getOrganizationUnit(), receipt.getReceiptType());
-
-            if (templateMapping != null) {
-                templateId = templateMapping.getTemplateId();
-            }
-        }
-
-        if (templateId == null) {
-            return receipt.getOrganizationUnit().getDefaultTemplateId();
-        }
-        return templateId;
     }
 
     private ReceiptFile createReceiptFile(String receiptNumber, byte[] data, String mimeType) throws IOException {

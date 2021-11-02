@@ -1,10 +1,13 @@
 package com.encircle360.oss.receiptfox.controller.receipt;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.encircle360.oss.receiptfox.client.docsrabbit.dto.render.RenderResultDTO;
 import com.encircle360.oss.receiptfox.dto.pagination.PageContainer;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.api.CreateUpdateReceiptDTO;
@@ -36,6 +40,7 @@ import com.encircle360.oss.receiptfox.model.receipt.ReceiptStatus;
 import com.encircle360.oss.receiptfox.service.ContactService;
 import com.encircle360.oss.receiptfox.service.OrganizationUnitService;
 import com.encircle360.oss.receiptfox.service.PageContainerFactory;
+import com.encircle360.oss.receiptfox.service.SimpleStorageService;
 import com.encircle360.oss.receiptfox.service.TaxRateService;
 import com.encircle360.oss.receiptfox.service.receipt.ReceiptFileService;
 import com.encircle360.oss.receiptfox.service.receipt.ReceiptService;
@@ -44,7 +49,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -58,6 +65,7 @@ public class ReceiptController {
     // services
     private final OrganizationUnitService organizationUnitService;
     private final PageContainerFactory pageContainerFactory;
+    private final SimpleStorageService simpleStorageService;
     private final ReceiptFileService receiptFileService;
     private final ReceiptService receiptService;
     private final ContactService contactService;
@@ -103,6 +111,38 @@ public class ReceiptController {
 
         ReceiptDTO dto = receiptMapper.toDto(receipt);
         return ResponseEntity.status(HttpStatus.OK).body(dto);
+    }
+
+    @Operation(
+        operationId = "previewReceipt",
+        description = "Returns a receipt preview as download by its id.",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "ReceiptFile was found."),
+            @ApiResponse(responseCode = "404", description = "ReceiptFile was not found.")
+        }
+    )
+    @GetMapping(value = "/{id}/preview")
+    public ResponseEntity<Resource> preview(@PathVariable final Long id) throws IOException {
+        Receipt receipt = receiptService.get(id);
+        if (receipt == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        RenderResultDTO result;
+        try {
+            result = receiptService.render(receipt);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        byte[] data = simpleStorageService.decode(result.getBase64());
+        ByteArrayResource resource = new ByteArrayResource(data);
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .contentLength(data.length)
+            .contentType(MediaType.APPLICATION_PDF)
+            .body(resource);
     }
 
     @Operation(
