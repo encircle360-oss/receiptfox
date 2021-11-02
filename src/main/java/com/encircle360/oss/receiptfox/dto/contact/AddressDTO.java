@@ -35,4 +35,7 @@ public class AddressDTO {
 
     @Schema(description = "The country code this address belongs to.")
     private String countryCode;
+
+    @Schema(description = "Additional information")
+    private String additional;
 }

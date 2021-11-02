@@ -1,7 +1,5 @@
 package com.encircle360.oss.receiptfox.model.contact;
 
-import com.encircle360.oss.receiptfox.util.LocaleUtils;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,5 +26,5 @@ public class Address {
     private String city;
 
     private String countryCode;
-
+    private String additional;
 }

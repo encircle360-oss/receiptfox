@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 
 import com.encircle360.oss.receiptfox.dto.contact.AddressDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptTypeDTO;
+import com.encircle360.oss.receiptfox.model.contact.Address;
 import com.encircle360.oss.receiptfox.validation.receipt.ValidReceipt;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -46,6 +47,9 @@ public class CreateUpdateReceiptDTO {
     @NotNull
     @Schema(description = "The address of the receiver.")
     private @Valid AddressDTO receiverAddress;
+
+    @Schema(description = "The address of the benefit receiver.")
+    private @Valid Address benefitReceiverAddress;
 
     @Schema(description = "Id of the contact, this receipt belongs to.")
     private Long contactId;

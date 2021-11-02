@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.encircle360.oss.receiptfox.dto.contact.AbstractEntityDTO;
 import com.encircle360.oss.receiptfox.dto.contact.AddressDTO;
+import com.encircle360.oss.receiptfox.model.contact.Address;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -40,6 +41,9 @@ public class ReceiptDTO extends AbstractEntityDTO {
 
     @Schema(description = "The address of the receiver.")
     private AddressDTO receiverAddress;
+
+    @Schema(description = "The address of the benefit receiver.")
+    private Address benefitReceiverAddress;
 
     @Schema(description = "Id of the contact, this receipt belongs to.")
     private Long contactId;

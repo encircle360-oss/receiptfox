@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.context.event.EventListener;
@@ -28,8 +29,10 @@ import com.encircle360.oss.receiptfox.client.docsrabbit.dto.render.RenderResultD
 import com.encircle360.oss.receiptfox.client.docsrabbit.dto.template.TemplateDTO;
 import com.encircle360.oss.receiptfox.event.ReceiptProcessedEvent;
 import com.encircle360.oss.receiptfox.model.TemplateMapping;
+import com.encircle360.oss.receiptfox.model.contact.Contact;
 import com.encircle360.oss.receiptfox.model.receipt.Receipt;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptFile;
+import com.encircle360.oss.receiptfox.service.ContactService;
 import com.encircle360.oss.receiptfox.service.SimpleStorageService;
 import com.encircle360.oss.receiptfox.service.TemplateMappingService;
 import com.encircle360.oss.receiptfox.service.receipt.ReceiptFileService;
@@ -47,6 +50,7 @@ public class ReceiptProcessedListeners {
     private final TemplateMappingService templateMappingService;
     private final SimpleStorageService simpleStorageService;
     private final ReceiptFileService receiptFileService;
+    private final ContactService contactService;
     private final ReceiptService receiptService;
 
     // clients
@@ -68,11 +72,17 @@ public class ReceiptProcessedListeners {
             throw new IllegalArgumentException("Template not found");
         }
 
+        Map<String, Object> model = new HashMap<>();
+        Contact contact = receipt.getContact();
+
+        model.put("receipt", receipt);
+        model.put("contact", contact);
+
         RenderRequestDTO renderRequestDTO = RenderRequestDTO
             .builder()
             .templateId(templateId)
             .format(RenderFormatDTO.PDF)
-            .model(receipt)
+            .model(model)
             .build();
 
         ResponseEntity<RenderResultDTO> resultResponseEntity = renderClient.render(renderRequestDTO);

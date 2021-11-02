@@ -58,6 +58,10 @@ public class Receipt extends AbstractEntity {
     @Column(columnDefinition = "jsonb")
     private Address receiverAddress;
 
+    @Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb")
+    private Address benefitReceiverAddress;
+
     @ManyToOne
     private Contact contact;
 
