@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.context.event.EventListener;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -26,7 +25,6 @@ import com.encircle360.oss.receiptfox.client.docsrabbit.dto.OCRResultDTO;
 import com.encircle360.oss.receiptfox.client.docsrabbit.dto.render.RenderFormatDTO;
 import com.encircle360.oss.receiptfox.client.docsrabbit.dto.render.RenderRequestDTO;
 import com.encircle360.oss.receiptfox.client.docsrabbit.dto.render.RenderResultDTO;
-import com.encircle360.oss.receiptfox.client.docsrabbit.dto.template.TemplateDTO;
 import com.encircle360.oss.receiptfox.event.ReceiptProcessedEvent;
 import com.encircle360.oss.receiptfox.model.TemplateMapping;
 import com.encircle360.oss.receiptfox.model.contact.Contact;
@@ -66,11 +64,6 @@ public class ReceiptProcessedListeners {
         }
 
         String templateId = getTemplateId(receipt);
-
-        ResponseEntity<TemplateDTO> templateResponseEntity = templateClient.get(templateId);
-        if (templateResponseEntity.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
-            throw new IllegalArgumentException("Template not found");
-        }
 
         Map<String, Object> model = new HashMap<>();
         Contact contact = receipt.getContact();
