@@ -1,6 +1,7 @@
 package com.encircle360.oss.receiptfox.dto.receipt;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -50,5 +51,8 @@ public class ReceiptPositionDTO {
 
     @Schema(description = "The tax rate for this position.", example = "0.19")
     private BigDecimal taxRatePercent;
+
+    @Schema(description = "Additional information for an invoice position.")
+    private HashMap<String, Object> meta;
 
 }

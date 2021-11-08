@@ -1,6 +1,7 @@
 package com.encircle360.oss.receiptfox.dto.receipt.api;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -47,4 +48,6 @@ public class CreateUpdateReceiptPositionDTO {
     @Schema(description = "Single price for the product / service within tax.", example = "11.90")
     private BigDecimal unitGrossAmount;
 
+    @Schema(description = "Additional information for an invoice position.")
+    private HashMap<String, Object> meta;
 }
