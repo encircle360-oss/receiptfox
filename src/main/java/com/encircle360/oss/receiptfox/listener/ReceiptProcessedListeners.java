@@ -1,22 +1,5 @@
 package com.encircle360.oss.receiptfox.listener;
 
-import static com.encircle360.oss.receiptfox.service.SimpleStorageService.PDF_EXTENSION;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Map;
-
-import org.springframework.context.event.EventListener;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.encircle360.oss.receiptfox.client.docsrabbit.OcrClient;
 import com.encircle360.oss.receiptfox.client.docsrabbit.dto.OCRResultDTO;
 import com.encircle360.oss.receiptfox.client.docsrabbit.dto.render.RenderResultDTO;
@@ -26,9 +9,25 @@ import com.encircle360.oss.receiptfox.model.receipt.ReceiptFile;
 import com.encircle360.oss.receiptfox.service.SimpleStorageService;
 import com.encircle360.oss.receiptfox.service.receipt.ReceiptFileService;
 import com.encircle360.oss.receiptfox.service.receipt.ReceiptService;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
+
+import static com.encircle360.oss.receiptfox.service.SimpleStorageService.PDF_EXTENSION;
 
 @Slf4j
 @Component
@@ -43,6 +42,7 @@ public class ReceiptProcessedListeners {
     // clients
     private final OcrClient ocrClient;
 
+    @Order(1)
     @EventListener(ReceiptProcessedEvent.class)
     public void generateReceiptFile(ReceiptProcessedEvent event) throws IOException {
         Receipt receipt = receiptService.get(event.getReceiptId());
@@ -70,7 +70,7 @@ public class ReceiptProcessedListeners {
         receiptFileService.save(receiptFile);
     }
 
-    @Async
+    @Order(2)
     @EventListener(ReceiptProcessedEvent.class)
     public void ocrScan(ReceiptProcessedEvent ocrEvent) throws IOException {
         Receipt receipt = receiptService.get(ocrEvent.getReceiptId());
@@ -85,6 +85,11 @@ public class ReceiptProcessedListeners {
             return;
         }
 
+        this.doOcrScan(receiptFile);
+    }
+
+    @Async
+    void doOcrScan(ReceiptFile receiptFile) throws IOException {
         byte[] data = simpleStorageService.get(receiptFile.getS3Bucket(), receiptFile.getS3Path());
         MultipartFile file = new ByteArrayMultipartFile(receiptFile.getS3Path(), MediaType.APPLICATION_PDF_VALUE, data);
 
