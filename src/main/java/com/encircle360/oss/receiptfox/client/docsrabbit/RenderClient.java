@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 
-@FeignClient(name = "renderClient", url = "http://docsrabbit-service:50005/render")
+@FeignClient(value = "renderClient", path = "/render", url = "http://${feign.client.docsrabbit:docsrabbit-service:50005}")
 public interface RenderClient {
 
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
