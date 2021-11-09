@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@FeignClient(name = "templateClient", url = "http://docsrabbit-service:50005/templates", decode404 = true)
+@FeignClient(value = "templateClient", path = "/templates", url = "http://${feign.client.docsrabbit:docsrabbit-service:50005}", decode404 = true)
 public interface TemplateClient {
 
     @GetMapping("")

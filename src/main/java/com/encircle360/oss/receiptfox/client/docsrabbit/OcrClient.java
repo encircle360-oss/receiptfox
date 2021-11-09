@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.encircle360.oss.receiptfox.client.docsrabbit.dto.OCRResultDTO;
 
-@FeignClient(value = "ocrClient", url = "http://docsrabbit-service:50005/ocr", configuration = MultipartFeignConfiguration.class)
+@FeignClient(value = "ocrClient", path = "/ocr", url = "http://${feign.client.docsrabbit:docsrabbit-service:50005}", configuration = MultipartFeignConfiguration.class)
 public interface OcrClient {
 
     @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
