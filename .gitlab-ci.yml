@@ -34,7 +34,7 @@ gradle-build:
       - build/libs/*.jar
 
 docker-test:
-  stage: build
+  stage: package
   before_script:
     - wget -O /usr/bin/docker-buildx $BUILDX_URL
     - chmod +x /usr/bin/docker-buildx
