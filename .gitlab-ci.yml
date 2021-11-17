@@ -45,7 +45,7 @@ docker-test:
     - docker-buildx create --use
     - docker-buildx build --platform $PLATFORMS .
 
-docker-build:
+docker-package:
   stage: package
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
