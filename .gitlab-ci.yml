@@ -35,6 +35,8 @@ gradle-build:
 
 docker-test:
   stage: package
+  rules:
+    - if: $CI_COMMIT_BRANCH != "master"
   before_script:
     - wget -O /usr/bin/docker-buildx $BUILDX_URL
     - chmod +x /usr/bin/docker-buildx
@@ -45,8 +47,8 @@ docker-test:
 
 docker-build:
   stage: package
-  only:
-    - master
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
   before_script:
     - wget -O /usr/bin/docker-buildx $BUILDX_URL
     - chmod +x /usr/bin/docker-buildx
