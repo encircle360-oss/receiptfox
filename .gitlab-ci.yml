@@ -33,6 +33,16 @@ gradle-build:
     paths:
       - build/libs/*.jar
 
+docker-test:
+  stage: build
+  before_script:
+    - wget -O /usr/bin/docker-buildx $BUILDX_URL
+    - chmod +x /usr/bin/docker-buildx
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker-buildx create --use
+    - docker-buildx build --platform $PLATFORMS .
+
 docker-build:
   stage: package
   only:
