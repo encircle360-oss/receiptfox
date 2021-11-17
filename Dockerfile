@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk
+FROM openjdk:17-alpine
 VOLUME /tmp
 
 ADD /build/libs/*.jar /receiptfox.jar
