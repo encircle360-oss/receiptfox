@@ -1,3 +1,5 @@
+[![pipeline status](https://gitlab.com/encircle360-oss/receiptfox/receiptfox/badges/master/pipeline.svg)](https://gitlab.com/encircle360-oss/receiptfox/receiptfox/commits/master)
+
 # receiptfox - receipt creation, management and APIs
 
 This is a small microservice that can generate beautiful looking invoice documents as PDF for you. It also manages your invoices and saves them within a postgres database. You can

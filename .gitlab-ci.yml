@@ -16,6 +16,7 @@ variables:
 stages:
   - build
   - package
+  - version
 
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
@@ -33,22 +34,7 @@ gradle-build:
     paths:
       - build/libs/*.jar
 
-docker-test:
-  stage: package
-  needs:
-    - job: gradle-build
-      artifacts: true
-  except:
-    - master
-  before_script:
-    - wget -O /usr/bin/docker-buildx $BUILDX_URL
-    - chmod +x /usr/bin/docker-buildx
-  script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - docker-buildx create --use
-    - docker-buildx build --platform $PLATFORMS .
-
-docker-package:
+docker-latest:
   stage: package
   needs:
     - job: gradle-build
@@ -62,4 +48,18 @@ docker-package:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker-buildx create --use
     - docker-buildx build --platform $PLATFORMS -t $CI_REGISTRY_IMAGE:latest --push .
-    - docker-buildx build --platform $PLATFORMS -t $CI_REGISTRY_IMAGE:${CI_COMMIT_SHA:0:8} --push .
+
+docker-version:
+  stage: package
+  needs:
+    - job: gradle-build
+      artifacts: true
+  only:
+    - tags
+  before_script:
+    - wget -O /usr/bin/docker-buildx $BUILDX_URL
+    - chmod +x /usr/bin/docker-buildx
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker-buildx create --use
+    - docker-buildx build --platform $PLATFORMS -t $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG --push .
