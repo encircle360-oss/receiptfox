@@ -1,8 +1,4 @@
 [![pipeline status](https://gitlab.com/encircle360-oss/receiptfox/receiptfox/badges/master/pipeline.svg)](https://gitlab.com/encircle360-oss/receiptfox/receiptfox/commits/master)
-[![latest version](https://gitlab.com/encircle360-oss/receiptfox/receiptfox/-/jobs/artifacts/master/raw/badges/latestversion.svg?job=create-badges)](https://gitlab.com/encircle360-oss/receiptfox/receiptfox/-/tags)
-[![commits](https://gitlab.com/encircle360-oss/receiptfox/receiptfox/-/jobs/artifacts/master/raw/badges/commits.svg?job=create-badges)](https://gitlab.com/encircle360-oss/receiptfox/receiptfox/-/commits)
-[![licence](https://gitlab.com/encircle360-oss/receiptfox/receiptfox/-/jobs/artifacts/master/raw/badges/license.svg?job=create-badges)](https://gitlab.com/encircle360-oss/receiptfox/receiptfox/-/blob/master/LICENSE)
-[![awesomeness](https://gitlab.com/encircle360-oss/receiptfox/receiptfox/-/jobs/artifacts/master/raw/badges/awesomeness.svg?job=create-badges)](https://encircle360.com)
 
 # receiptfox - receipt creation, management and APIs
 
