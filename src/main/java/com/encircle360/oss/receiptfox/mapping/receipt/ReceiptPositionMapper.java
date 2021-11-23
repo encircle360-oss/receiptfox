@@ -1,21 +1,17 @@
 package com.encircle360.oss.receiptfox.mapping.receipt;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.List;
-
-import org.mapstruct.AfterMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.factory.Mappers;
-
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptPositionDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.api.CreateUpdateReceiptPositionDTO;
 import com.encircle360.oss.receiptfox.model.TaxRate;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptPosition;
+import org.mapstruct.*;
+import org.mapstruct.factory.Mappers;
 
-@Mapper
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+
+@Mapper(builder = @Builder(disableBuilder = true))
 public interface ReceiptPositionMapper {
 
     ReceiptPositionMapper INSTANCE = Mappers.getMapper(ReceiptPositionMapper.class);
@@ -34,7 +30,7 @@ public interface ReceiptPositionMapper {
     List<ReceiptPositionDTO> toDtos(List<ReceiptPosition> receiptPositions);
 
     @AfterMapping
-    default void postProcess(@MappingTarget ReceiptPosition position) {
+    default ReceiptPosition postProcess(@MappingTarget ReceiptPosition position) {
         BigDecimal singleNetAmount = position.getUnitNetAmount();
         BigDecimal singleGrossAmount = position.getUnitGrossAmount();
         BigDecimal taxMultiplier = BigDecimal.ONE.add(position.getTaxRatePercent());
@@ -42,7 +38,7 @@ public interface ReceiptPositionMapper {
         // Both values are null should not be possible
         // only for avoiding null pointers
         if (singleNetAmount == null && singleGrossAmount == null) {
-            return;
+            return null;
         }
 
         if (singleNetAmount != null) {
@@ -60,5 +56,6 @@ public interface ReceiptPositionMapper {
         position.setTotalGrossAmount(singleGrossAmount.multiply(quantity));
         position.setTotalTaxAmount(position.getTotalGrossAmount().subtract(position.getTotalNetAmount()));
 
+        return position;
     }
 }
