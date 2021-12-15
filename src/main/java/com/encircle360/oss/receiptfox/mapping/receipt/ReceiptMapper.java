@@ -1,14 +1,5 @@
 package com.encircle360.oss.receiptfox.mapping.receipt;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import org.mapstruct.AfterMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.factory.Mappers;
-
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptDTO;
 import com.encircle360.oss.receiptfox.dto.receipt.api.CreateUpdateReceiptDTO;
 import com.encircle360.oss.receiptfox.model.OrganizationUnit;
@@ -17,8 +8,16 @@ import com.encircle360.oss.receiptfox.model.receipt.Receipt;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptFile;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptPosition;
 import com.encircle360.oss.receiptfox.model.receipt.ReceiptStatus;
+import org.mapstruct.*;
+import org.mapstruct.factory.Mappers;
 
-@Mapper(uses = ReceiptPositionMapper.class)
+import java.math.BigDecimal;
+import java.util.List;
+
+@Mapper(
+        uses = ReceiptPositionMapper.class,
+        builder = @Builder(disableBuilder = true)
+)
 public interface ReceiptMapper {
 
     ReceiptMapper INSTANCE = Mappers.getMapper(ReceiptMapper.class);
@@ -96,5 +95,4 @@ public interface ReceiptMapper {
             receipt.setStatus(ReceiptStatus.DRAFT);
         }
     }
-
 }
