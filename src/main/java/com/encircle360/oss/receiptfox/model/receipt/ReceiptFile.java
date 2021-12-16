@@ -1,19 +1,16 @@
 package com.encircle360.oss.receiptfox.model.receipt;
 
-import java.util.Map;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-
-import org.hibernate.annotations.Type;
-
 import com.encircle360.oss.receiptfox.model.AbstractEntity;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Type;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import java.util.Map;
 
 @Data
 @Entity
@@ -25,6 +22,7 @@ public class ReceiptFile extends AbstractEntity {
 
     private String name;
 
+    @Column(columnDefinition="text")
     private String ocr;
 
     @Type(type = "jsonb")
