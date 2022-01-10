@@ -1,23 +1,5 @@
 package com.encircle360.oss.receiptfox.controller.receipt;
 
-import java.io.IOException;
-import java.util.Base64;
-import java.util.List;
-
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.encircle360.oss.receiptfox.client.docsrabbit.dto.render.RenderResultDTO;
 import com.encircle360.oss.receiptfox.dto.pagination.PageContainer;
 import com.encircle360.oss.receiptfox.dto.receipt.ReceiptFileDTO;
@@ -26,11 +8,23 @@ import com.encircle360.oss.receiptfox.model.receipt.ReceiptFile;
 import com.encircle360.oss.receiptfox.service.PageContainerFactory;
 import com.encircle360.oss.receiptfox.service.SimpleStorageService;
 import com.encircle360.oss.receiptfox.service.receipt.ReceiptFileService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.Base64;
+import java.util.List;
 
 @Validated
 @RestController
@@ -94,7 +88,7 @@ public class ReceiptFileController {
             @ApiResponse(responseCode = "404", description = "ReceiptFile was not found.")
         }
     )
-    @GetMapping(value = "/{id}/download")
+    @GetMapping(value = {"/{id}/download", "/{id}/download/receipt-{id}.pdf"})
     public ResponseEntity<Resource> download(@PathVariable final Long id) throws IOException {
         ReceiptFile receiptFile = receiptFileService.get(id);
         if (receiptFile == null) {
