@@ -8,6 +8,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  liquibase:
+    change-log: classpath:changelog/db-changelog.sql
+    database-change-log-table: "liquibase_db_changelog"
+    database-change-log-lock-table: "liquibase_db_changelog_lock"
 
 server:
   port: 8080
